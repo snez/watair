@@ -17,6 +17,20 @@ Sprite.prototype =
     setImage: function (img)
     {
         this.img = img
+    },
+    
+    flood: function (delta)
+    {
+    	var pixelHeight = this.app.pixelHeight;
+        this.y += delta;
+        
+        //if (this.y > pixelHeight)
+        if (this.y > pixelHeight)
+        {
+            //this.y = this.y - pixelHeight;
+        	this.y = 100;
+        }
+        this.x = Math.sin(this.y); 
     }
 }
 
@@ -53,6 +67,8 @@ Watair.prototype =
             this.sprites.push(Sprite.create(i, i, '', this.app));
         }
         
+        this.sprites.push(Sprite.create(100,100,'textures/under-glow-iphone-wallpaper.jpg',this.app))
+     
     },
     
     update: function updateFn()
@@ -67,6 +83,8 @@ Watair.prototype =
         {
             this.sprites[i].update(Math.PI / 4);
         }
+        
+        this.sprites[10].flood(Math.PI / 4);
     },
     
     draw: function drawFn(ctx)
@@ -76,7 +94,10 @@ Watair.prototype =
         {
             sprite = this.sprites[i];
             ctx.drawImage(sprite.img, sprite.x, sprite.y);
-        }
+        }        
+        
+        sprite = this.sprites[10];
+        ctx.drawImage(sprite.img, sprite.x, sprite.y);
     }
 };
 
