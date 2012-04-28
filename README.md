@@ -1,4 +1,4 @@
 watair
 ======
 
-A battle between water and air.
+An epic battle between water and air. Yeah!

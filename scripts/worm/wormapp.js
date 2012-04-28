@@ -56,6 +56,13 @@ Application.prototype =
         
         this.watair.init();
         
+        this.pixelWidth = 240;
+        this.pixelHeight = 320;
+        this.ratio = this.pixelWidth / this.pixelHeight;
+        this.wInnerWidth = 0;
+        this.wInnerHeight = 0;
+        
+        this.canvasResize();
 
         var creationFunctions =
         [
@@ -131,6 +138,50 @@ Application.prototype =
 
         return false;
     },
+    
+    loadImages : function loadImagesFn(mappingTable)
+    {
+        var imageName = 'textures/crate.jpg';
+        
+        this.images = [];
+        
+        this.crateImage = new Image();
+        var crateURL = mappingTable[imageName];
+        if (crateURL)
+        {
+            
+            this.crateImage.src = crateURL;  
+        }
+        else
+        {
+            var console = window.console;
+            if (console)
+            {
+                console.error('Image missing: ', imageName);
+            }
+          
+        }
+        
+        var sprite, imageURL, image;
+        var sprites = this.watair.sprites;
+        
+        for (var i = 0; i < sprites.length; i++)
+        {
+            sprite = sprites[i];
+            imageURL = mappingTable[sprite.imageName];
+            if (imageURL)
+            {
+                image = this.images[sprite.imageName];
+                if (!image)
+                {
+                    image = new Image();    
+                }
+                image.src = imageURL;
+                sprite.setImage(image);
+                this.images[sprite.imageName] = image;
+            }
+        }
+    },
 
     // Update game state
     updateGame : function updateGameFn(heartbeat)
@@ -180,14 +231,58 @@ Application.prototype =
         this.needToRender = false;
     },
     
-    renderCanvas : function renderCanvasFn()
+    canvasResize : function canvasResizeFn()
     {
         var canvas = this.canvas;
         var canvas2dContext = this.canvas2dContext;
 
+        this.wInnerHeight = window.innerHeight;
+        this.wInnerWidth = window.innerWidth;
+        
+        canvas.width = (window.innerHeight * this.ratio);
+        canvas.height = window.innerHeight;
+        
+        this.scaleX = window.innerHeight / this.pixelHeight;
+        this.scaleY = canvas.width / this.pixelWidth;
+        
+        
+        //canvas2dContext.translate(
+         //                       -(((canvas2dContext.canvas.width * scale) - canvas2dContext.canvas.width) >> 1),
+         //                       -(((canvas2dContext.canvas.height * scale) - canvas2dContext.canvas.height) >> 1));
+        canvas2dContext.scale(this.scaleX, this.scaleY);
+        
+        this.width = canvas.width;
+        this.height = canvas.height;
+    },
+    
+    renderCanvas : function renderCanvasFn()
+    {
+        var canvas = this.canvas;
+        var canvas2dContext = this.canvas2dContext;
+        
+        var innerHeight = window.innerHeight;
+        var innerWidth = window.innerWidth;
+        
+        if (innerHeight != this.wInnerHeight || innerWidth != this.wInnerWidth)
+        {
+            this.canvasResize();
+        }
+        
+        canvas2dContext.clearRect(0 , 0, this.width, this.height);
+
         // Clear background to red or grey
         canvas2dContext.fillStyle = "#555500";
-        canvas2dContext.fillRect(0, 0, canvas.width, canvas.height);
+        canvas2dContext.fillRect(0, 0, 240, 320);
+        
+        canvas2dContext.fillStyle = "#000000";
+        canvas2dContext.fillText("Height: " + canvas.height + ', Width: ' + canvas.width, 10, 20);
+        
+        canvas2dContext.drawImage(this.crateImage, 10, 40);
+        
+        this.watair.draw(canvas2dContext);
+        
+        
+        
 
         // Focus
         //if (this.isFocused)
@@ -611,6 +706,8 @@ Application.prototype =
         var mappingTable = this.mappingTable;
         var urlMapping = mappingTable.urlMapping;
         var assetPrefix = mappingTable.assetPrefix;
+        
+        this.loadImages(urlMapping);
 
         //managers.textureManager.setPathRemapping(urlMapping, assetPrefix);
         //managers.shaderManager.setPathRemapping(urlMapping, assetPrefix);
@@ -1057,7 +1154,7 @@ Application.create = function applicationCreateFn(runInEngine)
     application.technique2D = null;
     application.technique2Dparameters = null;
     
-    application.watair = Watair.create();
+    application.watair = Watair.create({}, application);
 
     return application;
 };
