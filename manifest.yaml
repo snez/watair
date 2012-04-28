@@ -1,8 +1,8 @@
-canvas_main: multiworm.canvas.js
-cover_art: cover_art.png
+canvas_main: watair.canvas.js
+cover_art: ''
 deploy_files:
-- multiworm.tzjs
-- multiworm.canvas.js
+- watair.tzjs
+- watair.canvas.js
 - mapping_table.json
 - leaderboards.yaml
 - badges.yaml
@@ -13,9 +13,9 @@ deployed: Never
 engine_version: '0.20'
 is_temp: false
 mapping_table: mapping_table.json
-modified: 15:14 | 28/04/2012
-path: /Users/turbulenz/Development/tz_simple_build
-plugin_main: multiworm.tzjs
-slug: simple-build
-title: Simple Build
+modified: 16:58 | 28/04/2012
+path: /Users/snez/Sites/watair
+plugin_main: watair.tzjs
+slug: watair
+title: WatAir
 title_logo: ''

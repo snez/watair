@@ -70,6 +70,30 @@ Application.prototype =
             {func : this.enterLoadingLoop, isDependent : true}
         ];
         this.enterCallbackChain(this, creationFunctions);
+        
+        var endpoint = 'http://10.10.2.44:8083';
+        var socket = io.connect(endpoint);
+        this.socket = socket;
+        
+        // Socket events
+        socket.on('connect', function(){
+          console.log("Connected to server!");
+        });
+
+        socket.on('disconnect', function(s){
+          console.log("Disconnected from server!");
+        });
+
+        socket.on('msg', function(data) {
+          if (typeof data.type != 'undefined') {
+            if (data.type == 'move') {
+              console.log('Player has moved');
+              console.log('x: '+ data.player.coordinates.x + ', y: '+data.player.coordinates.y);
+            } 
+          }
+          console.log(data);
+        });
+  
     },
 
     // Update function called in main loop
@@ -164,7 +188,6 @@ Application.prototype =
         // Clear background to red or grey
         canvas2dContext.fillStyle = "#555500";
         canvas2dContext.fillRect(0, 0, canvas.width, canvas.height);
-        
 
         // Focus
         //if (this.isFocused)
@@ -360,9 +383,6 @@ Application.prototype =
         this.canvas = TurbulenzEngine.canvas;
         this.canvas2dContext = this.canvas.getContext('2d');
         
-        
-        
-
         return true;
     },
 
@@ -436,12 +456,34 @@ Application.prototype =
     createInputDeviceCallbacks : function createInputDeviceCallbacksFn()
     {
         var game = this.game;
+        var socket = this.socket;
         var inputDevice = this.devices.inputDevice;
 
         // Closure for keyDown callback
         function onKeyDown(keynum)
         {
             game.onKeyDown(keynum);
+            switch (keynum) {
+              case 200: // Left
+                var coordinates = { x: 1, y: 1 };
+                socket.emit('move', coordinates);
+                break;
+              case 201: // Right
+                var coordinates = { x: 2, y: 2 };
+                socket.emit('move', coordinates);
+                break;
+              case 202: // Up
+                var coordinates = { x: 3, y: 3 };
+                socket.emit('move', coordinates);
+                break;
+              case 203: // Down
+                var coordinates = { x: 4, y: 4 };
+                socket.emit('move', coordinates);
+                break;
+              default:
+                console.log('Unknown keynum:' +keynum);
+                break;
+            }
         }
 
         function onMouseDown(keynum)

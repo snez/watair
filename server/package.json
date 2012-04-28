@@ -1,0 +1,25 @@
+{
+  "name":         "WebSockets",
+  "description":  "(pending)",
+  "version":      "0.1",
+  "main":         "./app.js",
+  
+  "author": {
+    "name" :        "snez",
+    "email" :       "snez@snez.org"
+  },
+  
+  "keywords":     [],
+  
+  "licenses":      {
+    "type": "none"
+  },
+
+  "repository" : {
+  	  "type" : "git",
+  	  "url" : "git://github.com/snez/socketio-server.git"
+  },
+  "bugs" : {
+  	  "web" : "http://github.com/snez/socketio-server/issues"
+  }
+}
