@@ -1238,6 +1238,11 @@ Application.create = function applicationCreateFn(runInEngine)
     application.technique2Dparameters = null;
     
     application.watair = Watair.create({}, application);
+    
+    // Disable dragging on ios
+    document.ontouchmove = function(event){
+        event.preventDefault();
+    }
 
     return application;
 };
