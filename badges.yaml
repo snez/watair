@@ -1,0 +1,70 @@
+- key:           'abstract_cube_devourer'
+  title:         'Abstract Cube Devourer'
+  description:   'Eat 10 cubes'
+  type:          'game'
+  points:        10
+  total:         10
+  shape:         'circle'
+  visible:       true
+  imageresource:
+    icon:                 'img/badges/abstractorig.png'
+    border-color:         '#2299e3'
+    
+- key:           'suicidal_worm'
+  title:         'Suicidal Worm'
+  description:   'Die by crashing into yourself'
+  type:          'game'
+  points:        10
+  total:         1
+  shape:         'circle'
+  visible:       true
+  imageresource:
+    icon:                 'img/badges/suicidalorig.png'
+    border-color:         '#2299e3'
+
+- key:           'abstract_killer'
+  title:         'Abstract Killer'
+  description:   '10 kills'
+  type:          'game'
+  points:        10
+  total:         10
+  shape:         'circle'
+  visible:       true
+  imageresource:
+    icon:                 'img/badges/abstract-killer.png'
+    border-color:         '#2299e3'
+
+- key:           'addicted' 
+  title:         'Addicted'
+  description:   'Play 10 games'
+  type:          'game'
+  points:        10
+  total:         10
+  shape:         'circle'
+  visible:       true
+  imageresource:
+    icon:                 'img/badges/addictedorig.png'
+    border-color:         '#2299e3'
+    
+- key:           'played' 
+  title:         'Play to Win'
+  description:   'Start a game'
+  type:          'game'
+  points:        10
+  shape:         'circle'
+  visible:       true
+  imageresource:
+    icon:                 'img/badges/play-to-win.png'
+    border-color:         '#2299e3'
+
+- key:           'driven_over_the_edge'
+  title:         'Driven Over The Edge'
+  description:   'Loop over edge of map'
+  type:          'game'
+  points:        10
+  total:         1
+  shape:         'circle'
+  visible:       true
+  imageresource:
+    icon:                 'img/badges/driven.png'
+    border-color:         '#2299e3'

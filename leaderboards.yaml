@@ -1,0 +1,10 @@
+-   key: most-kills
+    title: Most kills
+    sortBy: 1
+    icon: 'img/leaderboards/best-time.png'
+    
+-   key: best-score
+    title: Best score
+    sortBy: 1
+    icon: 'img/leaderboards/best-score.png'
+
