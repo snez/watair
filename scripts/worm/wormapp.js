@@ -56,6 +56,9 @@ Application.prototype =
         
         this.watair.init();
         
+        this.img = new Image();
+        this.img.src = 'staticmax/lSveTEDcckzg4P_8QD1QxQ.jpg';
+        
 
         var creationFunctions =
         [
@@ -160,10 +163,30 @@ Application.prototype =
     {
         var canvas = this.canvas;
         var canvas2dContext = this.canvas2dContext;
+        
+        canvas.width = (window.innerHeight * 240 / 320);
+        canvas.height = window.innerHeight;
+        
+        var scaleX = window.innerHeight / 320;
+        var scaleY = canvas.width / 240;
+        
+        canvas2dContext.clearRect(0 , 0, canvas.width , canvas.height);
+        
+        //canvas2dContext.translate(
+         //                       -(((canvas2dContext.canvas.width * scale) - canvas2dContext.canvas.width) >> 1),
+         //                       -(((canvas2dContext.canvas.height * scale) - canvas2dContext.canvas.height) >> 1));
+        canvas2dContext.scale(scaleX, scaleY);
 
         // Clear background to red or grey
         canvas2dContext.fillStyle = "#555500";
-        canvas2dContext.fillRect(0, 0, canvas.width, canvas.height);
+        canvas2dContext.fillRect(0, 0, 240, 320);
+        
+        canvas2dContext.fillStyle = "#000000";
+        canvas2dContext.fillText("Height: " + canvas.height + ', Width: ' + canvas.width, 10, 20);
+        
+        canvas2dContext.drawImage(this.img, 10, 40);
+        
+        
         
 
         // Focus
