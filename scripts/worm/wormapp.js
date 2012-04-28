@@ -22,6 +22,9 @@
 function Application() {}
 Application.prototype =
 {
+  soundBubbleUp : false,
+  soundBubbleDown : false,
+  
     gameSettings : {
         width : 30,  // Must be a multiple of 2
         height : 16, // Must be a multiple of 2
@@ -72,6 +75,7 @@ Application.prototype =
             {func : this.createBadgeManager, isDependent : false, noCallback : true},
             {func : this.createGameLeaderboards, isDependent : true},
             {func : this.createGameBadges, isDependent : false},
+            {func : this.createGameSounds, isDependent : false, noCallback : true },
             {func : this.createGame, isDependent : true, noCallback : true},
             {func : this.createHTMLWriter, isDependent : true, noCallback : true},
             {func : this.enterLoadingLoop, isDependent : true}
@@ -460,11 +464,15 @@ Application.prototype =
         var networkDeviceParameters = {};
         var networkDevice = TurbulenzEngine.createNetworkDevice(networkDeviceParameters);
 
+        var soundDeviceParameters = {linearDistance : false};
+        var soundDevice = TurbulenzEngine.createSoundDevice(soundDeviceParameters);
+        
         //devices.graphicsDevice = graphicsDevice;
         devices.mathDevice = mathDevice;
         devices.inputDevice = inputDevice;
         devices.networkDevice = networkDevice;
-
+        devices.soundDevice = soundDevice;
+        
         var requestHandlerParameters = {};
         var requestHandler = RequestHandler.create(requestHandlerParameters);
         this.requestHandler = requestHandler;
@@ -529,6 +537,74 @@ Application.prototype =
         // Start the async callback chain
         callNextFunction();
     },
+    
+    createGameSounds : function createGameSoundsFn()
+    {
+      var devices = this.devices;
+      var soundDevice = devices.soundDevice;
+      var app = this;
+
+      // Create a sound source for each object (different pitch)
+      this.backgroundSoundSource = soundDevice.createSource({
+          position : [0,0,0],
+          relative : false,
+          pitch : 1.0
+      });
+      var backgroundSoundSource = this.backgroundSoundSource;
+      
+      this.playerOneSoundSource = soundDevice.createSource({
+          position : [0,0,0],
+          relative : false,
+          pitch : 1.0
+      });
+      this.playerTwoSoundSource = soundDevice.createSource({
+          position : [0,0,0],
+          relative : false,
+          pitch : 1.0
+      });
+      
+      
+      // Create the sound for the source to emit
+      soundDevice.createSound({
+        src: this.mappingTable.getURL("sounds/MainGameMusic.mp3"),
+        onload : function (sound)
+        {
+          if (sound)
+          {
+            backgroundSoundSource.play(sound);
+          } else {
+            console.log('Failed to load sounds');
+          }
+        }
+      });
+      
+      soundDevice.createSound({
+        src: this.mappingTable.getURL("sounds/BubbleDown.mp3"),
+        onload : function (sound)
+        {
+          if (sound)
+          {
+            app.soundBubbleDown = sound;
+          } else {
+            console.log('Failed to load sounds');
+          }
+        }
+      });
+      
+      soundDevice.createSound({
+        src: this.mappingTable.getURL("sounds/BubbleUp.mp3"),
+        onload : function (sound)
+        {
+          if (sound)
+          {
+            app.soundBubbleUp = sound;
+          } else {
+            console.log('Failed to load sounds');
+          }
+        }
+      });
+    },
+
 
     // Creates the game with the settings provided
     createGame : function createGameFn()
@@ -553,6 +629,7 @@ Application.prototype =
         var game = this.game;
         var socket = this.socket;
         var inputDevice = this.devices.inputDevice;
+        var app = this;
 
         // Closure for keyDown callback
         function onKeyDown(keynum)
@@ -568,10 +645,14 @@ Application.prototype =
                 socket.emit('move', coordinates);
                 break;
               case 202: // Up
+                if (app.playerOneSoundSource)
+                  app.playerOneSoundSource.play(app.soundBubbleUp);
                 var coordinates = { x: 3, y: 3 };
                 socket.emit('move', coordinates);
                 break;
               case 203: // Down
+                if (app.playerTwoSoundSource)
+                  app.playerTwoSoundSource.play(app.soundBubbleDown);
                 var coordinates = { x: 4, y: 4 };
                 socket.emit('move', coordinates);
                 break;
@@ -708,10 +789,12 @@ Application.prototype =
         var assetPrefix = mappingTable.assetPrefix;
         
         this.loadImages(urlMapping);
+        // loadSounds
 
         //managers.textureManager.setPathRemapping(urlMapping, assetPrefix);
         //managers.shaderManager.setPathRemapping(urlMapping, assetPrefix);
         //managers.fontManager.setPathRemapping(urlMapping, assetPrefix);
+        // sound set asset path
 
         this.appScene = AppScene.create(this.devices, this.managers,
                                         this.requestHandler, this.mappingTable,
@@ -738,7 +821,7 @@ Application.prototype =
 
         // If everything has finished loading/initialising
         if (this.appScene.hasLoaded() &&
-            this.hasUILoaded())
+            this.hasUILoaded() /* && sound manager loaded, wait till sounds loaded is zero */ )
         {
             TurbulenzEngine.clearInterval(this.intervalID);
 
