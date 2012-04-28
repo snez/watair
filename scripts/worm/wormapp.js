@@ -56,9 +56,6 @@ Application.prototype =
         
         this.watair.init();
         
-        this.img = new Image();
-        this.img.src = 'staticmax/lSveTEDcckzg4P_8QD1QxQ.jpg';
-        
 
         var creationFunctions =
         [
@@ -109,6 +106,28 @@ Application.prototype =
         }
 
         return false;
+    },
+    
+    loadImages : function loadImagesFn(mappingTable)
+    {
+        var imageName = 'textures/crate.jpg';
+        
+        this.crateImage = new Image();
+        var crateURL = mappingTable[imageName];
+        if (crateURL)
+        {
+            
+            this.crateImage.src = crateURL;  
+        }
+        else
+        {
+            var console = window.console;
+            if (console)
+            {
+                console.error('Image missing: ', imageName);
+            }
+          
+        }
     },
 
     // Update game state
@@ -184,7 +203,7 @@ Application.prototype =
         canvas2dContext.fillStyle = "#000000";
         canvas2dContext.fillText("Height: " + canvas.height + ', Width: ' + canvas.width, 10, 20);
         
-        canvas2dContext.drawImage(this.img, 10, 40);
+        canvas2dContext.drawImage(this.crateImage, 10, 40);
         
         
         
@@ -592,6 +611,8 @@ Application.prototype =
         var mappingTable = this.mappingTable;
         var urlMapping = mappingTable.urlMapping;
         var assetPrefix = mappingTable.assetPrefix;
+        
+        this.loadImages(urlMapping);
 
         //managers.textureManager.setPathRemapping(urlMapping, assetPrefix);
         //managers.shaderManager.setPathRemapping(urlMapping, assetPrefix);
