@@ -37,11 +37,9 @@ Sprite.prototype =
 
     update: function(){},
 
-    setImage: function(imgRight, imgLeft)
+    setImage: function(img)
     {
-        this.img = imgRight;
-        this.imgRight = imgRight;
-        this.imgLeft = imgLeft;
+        this.img = img;
     },
 
 	debugDraw: function debugDraw(ctx)
@@ -114,6 +112,8 @@ Watair.prototype =
 {
 	mvX: true,
 	mvY: true,
+  bubbleUpFn : function(){},
+  bubbleDownFn : function(){},
 
 	/**
 	 * All of the player sprites.
@@ -197,7 +197,7 @@ Watair.prototype =
 		this.playerSprite = this.playerSprites[0];
 		this.opponentSprite = this.playerSprites[1];
 
-        var waterSprite = Sprite.create(CLASS_NO_COLLISION, 0, 150, 'textures/under-glow-iphone-wallpaper.jpg', this.app, function()
+        var waterSprite = Sprite.create(CLASS_NO_COLLISION, 0, 150, 'textures/water.jpg', this.app, function()
 	    {
 	    	var pixelHeight = this.app.pixelHeight;
 	    	if (0 === this.change) {
@@ -299,7 +299,7 @@ Watair.prototype =
 
 					// bubble disappear
 					this.sprites.splice(i--, 1); // i-- sets position to redo this bubble
-
+          
 					// TODO: Animate bubble disappearance
 
 					// bubble reappear
@@ -307,6 +307,12 @@ Watair.prototype =
 
 					// water moves up/down
 					this.waterSprite.addChange(theSprite.bubbleValue);
+          
+          if (theSprite.bubbleValue > 0) {
+            this.bubbleDownFn();
+          } else {
+            this.bubbleUpFn();
+          }
 				}
 
 			}
