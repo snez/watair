@@ -791,7 +791,7 @@ Application.prototype =
         function onMouseDown(keynum)
         {
         	console.log("onMouseDown");
-            // game.onMouseDown(keynum);
+          //game.onMouseDown(keynum);
         }
 
         inputDevice.addEventListener('keydown', onKeyDown);
@@ -1331,9 +1331,11 @@ Application.prototype =
     },
 
     onPlayerTouch : function onPlayerTouch(ignored, x, y) {
-		console.log("touch: " + x + ", " + y);
-		this.watair.movePlayerTo(x, y);
+      console.log("touch: " + x + ", " + y);
+      this.watair.movePlayerTo(x, y);
+      this.socket.emit('move', { x: x, y: y });
     }
+    
 };
 
 // Application constructor function

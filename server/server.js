@@ -9,7 +9,7 @@ var players = [];
 
 function addPlayer(id) {
   console.log('Adding player');
-  if (players.length >= 2) {
+  if (players.length >= 4) {
     return false;
   } else {
     var num = getPlayerNumber();
