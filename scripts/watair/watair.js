@@ -3,6 +3,10 @@ var CLASS_NO_COLLISION = 0;
 var CLASS_PLAYER = 1;
 var CLASS_BUBBLE = 2;
 
+var CREATURE_UNKNOWN = 0;
+var CREATURE_FISH = 1;
+var CREATURE_BEE = 2;
+
 function Sprite() {}
 Sprite.prototype =
 {
@@ -24,6 +28,7 @@ Sprite.prototype =
     }
   },
 
+	creature : CREATURE_BEE,
 
 	/**
 	 * Which frame currently showing.
@@ -130,7 +135,7 @@ Watair.prototype =
 		var randomX = Math.floor((Math.random()*240)+1);
         var randomY = Math.floor((Math.random()*320)+1);
         var newBubble = Sprite.create(CLASS_BUBBLE, randomX, randomY, 'textures/down bubble float/down bubble float.png', this.app, function(){});
-        newBubble.bubbleValue = (Math.random() >= 0.5) ? 20 : -20;
+        newBubble.bubbleValue = (Math.random() >= 0.5) ? -20 : 20;
         if (newBubble.bubbleValue > 0) {
         	newBubble.imageName = 'textures/up bubble float/up bubble float0001.png';
         }
@@ -234,9 +239,11 @@ Watair.prototype =
     setPlayer : function setPlayer(num) {
       if (num == 1) {
         this.playerSprite = this.playerSprites[0];
+        this.playerSprite.creature = CREATURE_BEE;
         this.opponentSprite = this.playerSprites[1];
       } else {
         this.playerSprite = this.playerSprites[1];
+        this.playerSprite.creature = CREATURE_FISH;
         this.opponentSprite = this.playerSprites[0];
       }
     },
@@ -306,7 +313,16 @@ Watair.prototype =
 
 
 			// FIXME: Switch to using background height check for water level.
+			var waterSprite = this.waterSprite;
+			if (this.playerSprite.creature == CREATURE_FISH && waterSprite.y >= this.playerSprite.y) {
+				// TODO: FISH DIED
+				window.console.log("fish died");
+			} else if (this.playerSprite.creature == CREATURE_BEE && waterSprite.y <= this.playerSprite.y) {
+				// TODO: BEE DIED
+				window.console.log("bee died");
+			}
 
+/*
 			if ((theSprite.imageName == 'textures/under-glow-iphone-wallpaper.jpg')
 					&& (this.playerSprite.imageName != FISH_FILENAME))
 				{
@@ -322,6 +338,7 @@ Watair.prototype =
 					// Fish loses
 					// this.console.log('Dead Fish');
 				}
+*/
         }
 
     }
