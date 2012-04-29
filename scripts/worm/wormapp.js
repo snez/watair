@@ -1336,8 +1336,11 @@ Application.prototype =
     },
 
     onPlayerTouch : function onPlayerTouch(ignored, x, y) {
+    	x = (x - 16) / this.scaleX;
+    	y = (y - 16) / this.scaleY;
+
       console.log("touch: " + x + ", " + y);
-      this.watair.movePlayerTo((x - 16) / this.scaleX, (y - 16) / this.scaleY);
+      this.watair.movePlayerTo(x, y);
       this.socket.emit('move', { x: x, y: y });
     }
 

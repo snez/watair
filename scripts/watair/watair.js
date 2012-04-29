@@ -76,6 +76,7 @@ Sprite.create = function spriteCreateFn(x, y, imageName, app, updateFunction)
 };
 
 var FISH_FILENAME = "textures/fish anim/fish anim00012.png";
+var BEE_FILENAME = "textures/bee anim/bee anim00012.png";
 
 //
 // Watair:
@@ -104,8 +105,8 @@ Watair.prototype =
             console.log('Init');
         }
 
-		function buildPlayer(x, y, allSprites) {
-			var sprite = Sprite.create(x, y, FISH_FILENAME, this.app, function()
+		function buildPlayer(x, y, filename, allSprites) {
+			var sprite = Sprite.create(x, y, filename, this.app, function()
 				{
 					if (this.mvX && Math.abs(this.x - this.destX) > 9)
 					{
@@ -147,8 +148,8 @@ Watair.prototype =
 			return sprite;
 		}
 
-		this.playerSprites.push(buildPlayer(100, 100, this.sprites));
-		this.playerSprites.push(buildPlayer(120, 200, this.sprites));
+		this.playerSprites.push(buildPlayer(100, 100, BEE_FILENAME, this.sprites));
+		this.playerSprites.push(buildPlayer(120, 200, FISH_FILENAME, this.sprites));
 		this.playerSprite = this.playerSprites[0];
     this.opponentSprite = this.playerSprites[1];
 
