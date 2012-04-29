@@ -132,11 +132,10 @@ Watair.prototype =
 
 		    sprite.setDestination = function(x, y)
 		    {
-		    	this.destX = x; // * window.app.scaleX;
-		    	this.destY = y; // * window.app.scaleY;
+		    	this.destX = x;
+		    	this.destY = y;
 		    	var w = x - this.x;
 		    	var h = y - this.y;
-		    	// var theta = Math.atan(h/w);
 		    	var theta = Math.atan2(h, w);
 		    	this.dx = this.speed * Math.cos(theta);
 		    	this.dy = this.speed * Math.sin(theta);

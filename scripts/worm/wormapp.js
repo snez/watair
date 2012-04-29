@@ -1332,10 +1332,10 @@ Application.prototype =
 
     onPlayerTouch : function onPlayerTouch(ignored, x, y) {
       console.log("touch: " + x + ", " + y);
-      this.watair.movePlayerTo(x, y);
+      this.watair.movePlayerTo((x - 16) / this.scaleX, (y - 16) / this.scaleY);
       this.socket.emit('move', { x: x, y: y });
     }
-    
+
 };
 
 // Application constructor function
