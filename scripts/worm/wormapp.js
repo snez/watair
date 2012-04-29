@@ -95,11 +95,11 @@ Application.prototype =
 
         // Socket events
         socket.on('connect', function(){
-          app.console.log("Connected to server!");
+//          app.console.log("Connected to server!");
         });
 
         socket.on('disconnect', function(s){
-          app.console.log("Disconnected from server!");
+//          app.console.log("Disconnected from server!");
         });
 
         socket.on('msg', function(data) {
@@ -638,7 +638,7 @@ Application.prototype =
           if (sound)
           {
             app.soundTitleMusic = sound;
-            backgroundSoundSource.play(app.soundTitleMusic);
+//            backgroundSoundSource.play(app.soundTitleMusic);
           } else {
             app.console.log('Failed to load sounds');
           }
@@ -651,7 +651,7 @@ Application.prototype =
         {
           if (sound)
           {
-//            backgroundSoundSource.play(sound);
+            backgroundSoundSource.play(sound);
             app.soundMainMusic = sound;
           } else {
             app.console.log('Failed to load sounds');

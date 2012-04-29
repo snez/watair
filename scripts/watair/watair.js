@@ -62,11 +62,6 @@ Sprite.prototype =
     draw : function(ctx)
     {
     	// this.debugDraw(ctx);
-      if (this.directionChanged) {
-        console.log('direction changed');
-        this.directionChanged = false;
-        
-      }
       ctx.drawImage(this.img, this.x, this.y);
           	
     }
@@ -117,8 +112,6 @@ Watair.prototype =
 
     init: function initFn()
     {
-        this.console.log('Init');
-        
         var that = this;
 
 		function buildPlayer(x, y, filename, allSprites) {
