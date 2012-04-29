@@ -2,15 +2,64 @@
 function Sprite() {}
 Sprite.prototype =
 {
+	/**
+	 * Sprite animation frames.  null indicates this is not an animated sprite.
+	 */
+	animFrames:null,
+
+	/**
+	 * Which frame currently showing.
+	 */
+	frameNum:0,
+
     update: function(){},
 
-    setImage: function (img)
+    setImage: function(img)
     {
         this.img = img;
+    },
+
+	debugDraw: function debugDraw(ctx)
+	{
+        // Debug rendering by drawing boxes
+        ctx.beginPath();
+        ctx.rect(this.x - 2, this.y - 2, 36, 36);
+        // ctx.fillStyle = "#8ED6FF";
+	    // ctx.fill();
+	    ctx.lineWidth = 4;
+	    ctx.strokeStyle = "black";
+	    ctx.stroke();
+	},
+
+    setAnimFrames: function(frames)
+    {
+    	this.animFrames = frames;
+    	this.numFrames = frames.length;
+    	console.log("animFrames:" + frames);
+    	this.draw = function animate(ctx)
+    	{
+    		// this.debugDraw(ctx);
+    		var frameNum = this.frameNum;
+    		if (++frameNum >= this.numFrames) {
+    			frameNum = 0;
+    		}
+    		var img = this.animFrames[frameNum];
+    		ctx.drawImage(img, this.x, this.y);
+    		this.frameNum = frameNum;
+    	};
+    },
+
+    draw : function(ctx)
+    {
+    	// this.debugDraw(ctx);
+    	ctx.drawImage(this.img, this.x, this.y);
     }
 
 };
 
+/**
+ * @param imageName The image filename.  If contains a number, this is an animated sprite and the number represents the last frame number.
+ */
 Sprite.create = function spriteCreateFn(x, y, imageName, app, updateFunction)
 {
     var c = new Sprite();
@@ -37,7 +86,7 @@ Watair.prototype =
 	mvY: true,
 
 	playerSprite : function(){
-		var sprite = Sprite.create(100, 100, 'textures/fish.png', this.app, function()
+		var sprite = Sprite.create(100, 100, 'textures/fish anim/fish anim00012.png', this.app, function()
 			{
 				if (this.mvX && Math.abs(this.x - this.destX) > 9)
 				{
@@ -92,19 +141,18 @@ Watair.prototype =
 		    	var pixelHeight = this.app.pixelHeight;
 		        this.y += 1;
 
-		        //if (this.y > pixelHeight)
 		        if (this.y > pixelHeight)
 		        {
 		        	this.y = 100;
 		        }
 		    }));
-        
+
         // bubble placement
         for (var j = 0; j < 10; j++)
         {
         	var randomX = Math.floor((Math.random()*240)+1);
             var randomY = Math.floor((Math.random()*320)+1);
-            
+
             this.sprites.push(Sprite.create(randomX, randomY, 'textures/bubble.png', this.app, function(){}));
         }
 
@@ -134,23 +182,9 @@ Watair.prototype =
 
     draw: function drawFn(ctx)
     {
-        var sprite;
         for (var i = this.sprites.length - 1; i >= 0; i--)
         {
-            sprite = this.sprites[i];
-
-/*
-            // Debug rendering by drawing boxes
-            ctx.beginPath();
-            ctx.rect(sprite.x - 2, sprite.y - 2, 36, 36);
-            // ctx.fillStyle = "#8ED6FF";
-		    // ctx.fill();
-		    ctx.lineWidth = 4;
-		    ctx.strokeStyle = "black";
-		    ctx.stroke();
-*/
-
-            ctx.drawImage(sprite.img, sprite.x, sprite.y);
+            this.sprites[i].draw(ctx);
         }
     }
 };
