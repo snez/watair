@@ -333,13 +333,6 @@ Application.prototype =
 
         canvas2dContext.clearRect(0 , 0, this.width, this.height);
 
-        // Clear background to red or grey
-        canvas2dContext.fillStyle = "#555500";
-        canvas2dContext.fillRect(0, 0, 240, 320);
-
-        canvas2dContext.fillStyle = "#000000";
-        canvas2dContext.fillText("Height: " + canvas.height + ', Width: ' + canvas.width, 10, 20);
-
         canvas2dContext.drawImage(this.backgroundImage , 0, 0);
         this.watair.draw(canvas2dContext);
 
