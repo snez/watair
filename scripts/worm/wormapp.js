@@ -1346,7 +1346,7 @@ Application.create = function applicationCreateFn(runInEngine)
 {
     var application = new Application();
     
-    var console = null;//window.console;
+    var console = window.console;
     if (console)
     {
         application.console = console;
