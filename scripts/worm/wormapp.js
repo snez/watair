@@ -107,7 +107,13 @@ Application.prototype =
               app.watair.setPlayer(data.num);
             }
             if (data.type == 'createBubbles') {
-              
+              console.log(data);
+              for (var i in data.points)
+              {
+                var point = data.points[i];
+                console.log('asd');
+                app.watair.createBubble(point.x, point.y);
+              }
             }
           }
         });

@@ -131,10 +131,10 @@ Watair.prototype =
 	 */
 	waterSprite: null,
 
-	createBubble : function createBubble()
+	createBubble : function createBubble(randomX, randomY)
 	{
-		var randomX = Math.floor((Math.random()*240)+1);
-        var randomY = Math.floor((Math.random()*320)+1);
+//		var randomX = Math.floor((Math.random()*240)+1);
+//        var randomY = Math.floor((Math.random()*320)+1);
         var newBubble = Sprite.create(CLASS_BUBBLE, randomX, randomY, 'textures/down bubble float/down bubble float.png', this.app, function(){});
         newBubble.bubbleValue = (Math.random() >= 0.5) ? -20 : 20;
         if (newBubble.bubbleValue > 0) {
@@ -226,10 +226,10 @@ Watair.prototype =
 		this.opponentSprite = this.playerSprites[1];
 
         // bubble placement
-        for (var j = 0; j < 10; j++)
-        {
-        	this.createBubble();
-        }
+//        for (var j = 0; j < 10; j++)
+//        {
+//        	this.createBubble();
+//        }
 
     },
 
