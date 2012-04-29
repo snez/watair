@@ -142,6 +142,8 @@ Application.prototype =
     loadImages : function loadImagesFn(mappingTable)
     {
         var imageName = 'textures/crate.jpg';
+        var backgroundImageName = 'textures/bg.jpg';
+        var overlayImageName = 'textures/under-glow-iphone-wallpaper.jpg';
         
         this.images = [];
         
@@ -158,6 +160,40 @@ Application.prototype =
             if (console)
             {
                 console.error('Image missing: ', imageName);
+            }
+          
+        }
+        
+        this.backgroundImage = new Image();
+        var bgImgURL = mappingTable[backgroundImageName];
+        if (bgImgURL)
+        {
+            
+            this.backgroundImage.src = bgImgURL;  
+        }
+        else
+        {
+            var console = window.console;
+            if (console)
+            {
+                console.error('Image missing: ', backgroundImageName);
+            }
+          
+        }
+        
+        this.overlayImage = new Image();
+        var olImgURL = mappingTable[overlayImageName];
+        if (olImgURL)
+        {
+            
+            this.overlayImage.src = olImgURL;  
+        }
+        else
+        {
+            var console = window.console;
+            if (console)
+            {
+                console.error('Image missing: ', overlayImageName);
             }
           
         }
@@ -278,6 +314,7 @@ Application.prototype =
         canvas2dContext.fillText("Height: " + canvas.height + ', Width: ' + canvas.width, 10, 20);
         
         canvas2dContext.drawImage(this.crateImage, 10, 40);
+        canvas2dContext.drawImage(this.backgroundImage , 0, 0);
         
         this.watair.draw(canvas2dContext);
         
@@ -1155,6 +1192,11 @@ Application.create = function applicationCreateFn(runInEngine)
     application.technique2Dparameters = null;
     
     application.watair = Watair.create({}, application);
+    
+    // Disable dragging on ios
+    document.ontouchmove = function(event){
+        event.preventDefault();
+    }
 
     return application;
 };
