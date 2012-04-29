@@ -294,7 +294,7 @@ Application.prototype =
         canvas2dContext.fillStyle = "#000000";
         canvas2dContext.fillText("Height: " + canvas.height + ', Width: ' + canvas.width, 10, 20);
 
-	canvas2dContext.drawImage(this.backgroundImage , 0, 0);
+        canvas2dContext.drawImage(this.backgroundImage , 0, 0);
         this.watair.draw(canvas2dContext);
 
 
