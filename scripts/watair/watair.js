@@ -147,6 +147,33 @@ Watair.prototype =
     {
         var that = this;
 
+		// Water must be sprite 0
+        var waterSprite = Sprite.create(CLASS_NO_COLLISION, 0, 150, 'textures/water.jpg', this.app, function()
+	    {
+	    	var pixelHeight = this.app.pixelHeight;
+	    	if (0 === this.change) {
+	    		// stationary
+	    		return;
+	    	} else if (this.change > 0) {
+	    		this.y++;
+	    		this.change--;
+	    	} else {
+	    		this.y--;
+	    		this.change++;
+	    	}
+
+	        if (this.y > pixelHeight)
+	        {
+	        	this.y = 100;
+	        }
+	    });
+	    waterSprite.change = 0;
+	    waterSprite.addChange = function addChange(change) {
+	    	this.change += change;
+	    };
+	    this.sprites.push(this.waterSprite = waterSprite);
+
+
 		function buildPlayer(x, y, filename, allSprites) {
 			var sprite = Sprite.create(CLASS_PLAYER, x, y, filename, this.app, function()
 				{
@@ -197,31 +224,6 @@ Watair.prototype =
 		this.playerSprite = this.playerSprites[0];
 		this.opponentSprite = this.playerSprites[1];
 
-        var waterSprite = Sprite.create(CLASS_NO_COLLISION, 0, 150, 'textures/water.jpg', this.app, function()
-	    {
-	    	var pixelHeight = this.app.pixelHeight;
-	    	if (0 === this.change) {
-	    		// stationary
-	    		return;
-	    	} else if (this.change > 0) {
-	    		this.y++;
-	    		this.change--;
-	    	} else {
-	    		this.y--;
-	    		this.change++;
-	    	}
-
-	        if (this.y > pixelHeight)
-	        {
-	        	this.y = 100;
-	        }
-	    });
-	    waterSprite.change = 0;
-	    waterSprite.addChange = function addChange(change) {
-	    	this.change += change;
-	    };
-	    this.sprites.push(this.waterSprite = waterSprite);
-
         // bubble placement
         for (var j = 0; j < 10; j++)
         {
@@ -268,9 +270,14 @@ Watair.prototype =
 
     draw: function drawFn(ctx)
     {
-        for (var i = this.sprites.length - 1; i >= 0; i--)
+    	var sprites = this.sprites;
+
+    	var water = sprites[0];
+		water.draw(ctx);
+
+        for (var i = sprites.length - 1; i >= 1; i--)
         {
-            this.sprites[i].draw(ctx);
+            sprites[i].draw(ctx);
         }
     },
 
@@ -299,7 +306,7 @@ Watair.prototype =
 
 					// bubble disappear
 					this.sprites.splice(i--, 1); // i-- sets position to redo this bubble
-          
+
 					// TODO: Animate bubble disappearance
 
 					// bubble reappear
@@ -307,7 +314,7 @@ Watair.prototype =
 
 					// water moves up/down
 					this.waterSprite.addChange(theSprite.bubbleValue);
-          
+
           if (theSprite.bubbleValue > 0) {
             this.bubbleDownFn();
           } else {
@@ -324,27 +331,11 @@ Watair.prototype =
 				// TODO: FISH DIED
 				window.console.log("fish died");
 			} else if (this.playerSprite.creature == CREATURE_BEE && waterSprite.y <= this.playerSprite.y) {
-				// TODO: BEE DIED
+				// TODO: BEE DIED = FISH WIN
 				window.console.log("bee died");
+				// sprites
 			}
 
-/*
-			if ((theSprite.imageName == 'textures/under-glow-iphone-wallpaper.jpg')
-					&& (this.playerSprite.imageName != FISH_FILENAME))
-				{
-					// Termination
-					// Bee loses
-				}
-
-			if ((theSprite.imageName == 'textures/under-glow-iphone-wallpaper.jpg')
-					&& (this.playerSprite.imageName == FISH_FILENAME)
-					&& (this.playerSprite.y < theSprite.y))
-				{
-					// Termination
-					// Fish loses
-					// this.console.log('Dead Fish');
-				}
-*/
         }
 
     }
