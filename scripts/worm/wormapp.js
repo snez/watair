@@ -76,10 +76,6 @@ Application.prototype =
         [
             {func : this.createGameSession, isDependent : false},
             {func : this.createMappingTable, isDependent : true},
-            {func : this.createLeaderboardManager, isDependent : true},
-            {func : this.createBadgeManager, isDependent : false, noCallback : true},
-            {func : this.createGameLeaderboards, isDependent : true},
-            {func : this.createGameBadges, isDependent : false},
             {func : this.createGameSounds, isDependent : false, noCallback : true },
             {func : this.createGame, isDependent : true, noCallback : true},
             {func : this.createHTMLWriter, isDependent : true, noCallback : true},
@@ -122,7 +118,7 @@ Application.prototype =
 
         devices.inputDevice.update();
 
-        devices.networkDevice.update();
+        //devices.networkDevice.update();
 
         var heartbeat = false;
 
@@ -130,7 +126,7 @@ Application.prototype =
         {
             this.previousGameUpdateTime = currentTime;
 
-            this.checkOthers();
+            //this.checkOthers();
 
             heartbeat = true;
         }
@@ -139,11 +135,11 @@ Application.prototype =
         {
             this.watair.update();
 
-            this.leaderboards.update(currentTime);
+            //this.leaderboards.update(currentTime);
 
-            this.badges.update(currentTime);
+            //this.badges.update(currentTime);
 
-            this.htmlWriter.update();
+            //this.htmlWriter.update();
 
             return true;
         }
@@ -749,7 +745,7 @@ Application.prototype =
         // Closure for keyDown callback
         function onKeyDown(keynum)
         {
-            game.onKeyDown(keynum);
+            //game.onKeyDown(keynum);
             switch (keynum) {
               case 200: // Left
                 var coordinates = { x: 1, y: 1 };
@@ -940,7 +936,7 @@ Application.prototype =
         {
             TurbulenzEngine.clearInterval(this.intervalID);
 
-            this.createMultiplayerSession();
+            //this.createMultiplayerSession();
 
             this.intervalID = TurbulenzEngine.setInterval(localConnectingStateLoop, (1000 / 10));
         }
@@ -956,37 +952,39 @@ Application.prototype =
             return that.mainStateLoop();
         }
 
-        this.devices.networkDevice.update();
-
-        // If joined game
-        if (this.game.myWormIndex >= 0)
-        {
-            TurbulenzEngine.clearInterval(this.intervalID);
+        //this.devices.networkDevice.update();
+        
+        TurbulenzEngine.clearInterval(this.intervalID);
 
             this.appScene.setupScene();
 
             this.intervalID = TurbulenzEngine.setInterval(localMainStateLoop, (1000 / 60));
-        }
-        else
-        {
-            // If connected to session
-            if (this.multiplayerSession)
-            {
-                var currentTime = TurbulenzEngine.time;
-                var connectionTime = this.connectionTime;
-                var staleTime = this.staleTime;
-                if ((connectionTime + staleTime) < currentTime)
-                {
-                    this.isHost = true;
-                    this.game.start();
-                }
-                else if ((connectionTime + (staleTime * 0.5)) < currentTime)
-                {
-                    // Keep requesting to join to avoid problems when starting in the middle of a host transition
-                    this.multiplayerSession.sendToAll(this.networkIds.joining);
-                }
-            }
-        }
+
+        //// If joined game
+        //if (this.game.myWormIndex >= 0)
+        //{
+        //    
+        //}
+        //else
+        //{
+        //    // If connected to session
+        //    if (this.multiplayerSession)
+        //    {
+        //        var currentTime = TurbulenzEngine.time;
+        //        var connectionTime = this.connectionTime;
+        //        var staleTime = this.staleTime;
+        //        if ((connectionTime + staleTime) < currentTime)
+        //        {
+        //            this.isHost = true;
+        //            this.game.start();
+        //        }
+        //        else if ((connectionTime + (staleTime * 0.5)) < currentTime)
+        //        {
+        //            // Keep requesting to join to avoid problems when starting in the middle of a host transition
+        //            this.multiplayerSession.sendToAll(this.networkIds.joining);
+        //        }
+        //    }
+        //}
     },
 
     mainStateLoop : function mainStateLoopFn()
