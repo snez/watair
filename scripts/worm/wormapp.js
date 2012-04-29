@@ -105,14 +105,11 @@ Application.prototype =
           if (typeof data.type != 'undefined') {
             if (data.type == 'move') {
               app.watair.moveOpponentTo(data.player.coordinates.x, data.player.coordinates.y);
-              console.log('Player has moved');
-              console.log('x: '+ data.player.coordinates.x + ', y: '+data.player.coordinates.y);
             }
             if (data.type == 'setPlayer') {
               app.watair.setPlayer(data.num);
             }
           }
-          console.log(data);
         });
 
     },
@@ -244,7 +241,6 @@ Application.prototype =
 	            animFilenames = getAnimatedFilenames(imageName);
 	            if (animFilenames)
 	            {
-	            	window.console.log("image \"" + imageName + "\" is animated: " + animFilenames);
 	            	loadAnimFrames(sprite, images, animFilenames, animFilenames);
 	            } else {
 		            image = loadImage(sprite, imageName, images);
@@ -788,7 +784,6 @@ Application.prototype =
                 socket.emit('move', coordinates);
                 break;
               default:
-                console.log('Unknown keynum:' +keynum);
                 break;
             }
         }
@@ -1339,7 +1334,6 @@ Application.prototype =
     	x = (x - 16) / this.scaleX;
     	y = (y - 16) / this.scaleY;
 
-      console.log("touch: " + x + ", " + y);
       this.watair.movePlayerTo(x, y);
       this.socket.emit('move', { x: x, y: y });
     }

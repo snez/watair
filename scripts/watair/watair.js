@@ -6,6 +6,15 @@ Sprite.prototype =
 	 * Sprite animation frames.  null indicates this is not an animated sprite.
 	 */
 	animFrames:null,
+  directionChanged : false,
+  facing : 'right',
+  setDirection : function(direction) {
+    if (direction != this.facing) {
+      this.facing = direction;
+      this.directionChanged = true;
+    }
+  },
+  
 
 	/**
 	 * Which frame currently showing.
@@ -14,9 +23,11 @@ Sprite.prototype =
 
     update: function(){},
 
-    setImage: function(img)
+    setImage: function(imgRight, imgLeft)
     {
-        this.img = img;
+        this.img = imgRight;
+        this.imgRight = imgRight;
+        this.imgLeft = imgLeft;
     },
 
 	debugDraw: function debugDraw(ctx)
@@ -35,7 +46,6 @@ Sprite.prototype =
     {
     	this.animFrames = frames;
     	this.numFrames = frames.length;
-    	console.log("animFrames:" + frames);
     	this.draw = function animate(ctx)
     	{
     		// this.debugDraw(ctx);
@@ -52,7 +62,13 @@ Sprite.prototype =
     draw : function(ctx)
     {
     	// this.debugDraw(ctx);
-    	ctx.drawImage(this.img, this.x, this.y);
+      if (this.directionChanged) {
+        console.log('direction changed');
+        this.directionChanged = false;
+        
+      }
+      ctx.drawImage(this.img, this.x, this.y);
+          	
     }
 
 };
@@ -112,14 +128,12 @@ Watair.prototype =
 					{
 						this.x += this.dx;
 					} else {
-						if (this.mvX) { console.log("reached X:" + this.x + " which is close enough to " + this.destX); }
 						this.mvX = false;
 					}
 					if (this.mvY && Math.abs(this.y - this.destY) > 9)
 					{
 						this.y += this.dy;
 					} else {
-						if (this.mvY) { console.log("reached y:" + this.y + " which is close enough to " + this.destY); }
 						this.mvY = false;
 					}
 
@@ -140,6 +154,11 @@ Watair.prototype =
 		    	var theta = Math.atan2(h, w);
 		    	this.dx = this.speed * Math.cos(theta);
 		    	this.dy = this.speed * Math.sin(theta);
+          if (h < 0) {
+            sprite.setDirection('left');
+          } else {
+            sprite.setDirection('right');
+          }
 		    	console.log("delta:" + this.dx + ", " + this.dy);
 		    	this.mvX = this.mvY = true;
 		    };
