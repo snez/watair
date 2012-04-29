@@ -9,7 +9,7 @@ var players = [];
 
 function addPlayer(id) {
   console.log('Adding player');
-  if (players.length >= 4) {
+  if (players.length >= 2) {
     return false;
   } else {
     var num = getPlayerNumber();
@@ -67,24 +67,12 @@ function setCoordinates(id, coordinates) {
 //});
 
 io.sockets.on('connection', function (socket) {
+  console.log(socket.store.store);
   var playerNum = addPlayer(socket.id);
   if (playerNum !== false) 
   {
     socket.emit('msg', 'Welcome player '+playerNum);
-    
-    socket.on('message',function(data)
-    {
-      socket.get('nickname', function(err, nickname){
-        if (err) {
-          socket.emit('msg', err);
-        } else if (nickname != null) {
-          socket.broadcast.emit('msg', nickname + ' says ' + data);
-          socket.emit('msg', 'Message sent.');
-        } else {
-          socket.emit('msg', 'I have no memory of you.');
-        }
-      });
-    });
+    socket.emit('msg', { type: 'setPlayer', num: playerNum });
     
     socket.on('error', function(err){
       console.log(err);

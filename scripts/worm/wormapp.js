@@ -109,7 +109,7 @@ Application.prototype =
               console.log('x: '+ data.player.coordinates.x + ', y: '+data.player.coordinates.y);
             }
             if (data.type == 'setPlayer') {
-              app.watair.setPlayer(num);
+              app.watair.setPlayer(data.num);
             }
           }
           console.log(data);
