@@ -35,7 +35,7 @@ Sprite.prototype =
     {
     	this.animFrames = frames;
     	this.numFrames = frames.length;
-    	console.log("animFrames:" + frames);
+    	this.console.log("animFrames:" + frames);
     	this.draw = function animate(ctx)
     	{
     		// this.debugDraw(ctx);
@@ -69,6 +69,8 @@ Sprite.create = function spriteCreateFn(x, y, imageName, app, updateFunction)
     c.app = app;
     c.img = new Image();
     c.imageName = imageName ? imageName: 'textures/cratebubble_up_1.png';
+    
+    c.console = app.console;
 
     c.update = updateFunction;
 
@@ -99,27 +101,25 @@ Watair.prototype =
 
     init: function initFn()
     {
-        var console = window.console;
-        if (console)
-        {
-            console.log('Init');
-        }
+        this.console.log('Init');
+        
+        var that = this;
 
 		function buildPlayer(x, y, filename, allSprites) {
-			var sprite = Sprite.create(x, y, filename, this.app, function()
+			var sprite = Sprite.create(x, y, filename, that.app, function()
 				{
 					if (this.mvX && Math.abs(this.x - this.destX) > 9)
 					{
 						this.x += this.dx;
 					} else {
-						if (this.mvX) { console.log("reached X:" + this.x + " which is close enough to " + this.destX); }
+						if (this.mvX) { that.console.log("reached X:" + this.x + " which is close enough to " + this.destX); }
 						this.mvX = false;
 					}
 					if (this.mvY && Math.abs(this.y - this.destY) > 9)
 					{
 						this.y += this.dy;
 					} else {
-						if (this.mvY) { console.log("reached y:" + this.y + " which is close enough to " + this.destY); }
+						if (this.mvY) { that.console.log("reached y:" + this.y + " which is close enough to " + this.destY); }
 						this.mvY = false;
 					}
 
@@ -140,7 +140,7 @@ Watair.prototype =
 		    	var theta = Math.atan2(h, w);
 		    	this.dx = this.speed * Math.cos(theta);
 		    	this.dy = this.speed * Math.sin(theta);
-		    	console.log("delta:" + this.dx + ", " + this.dy);
+		    	that.console.log("delta:" + this.dx + ", " + this.dy);
 		    	this.mvX = this.mvY = true;
 		    };
 
@@ -256,7 +256,7 @@ Watair.prototype =
 				{
 					// Termination
 					// Fish loses
-					console.log('Dead Fish');
+					this.console.log('Dead Fish');
 				}
         }
 
@@ -269,6 +269,8 @@ Watair.create = function watairCreateFn(gameSettings, app)
 
     watair.app = app;
     watair.sprites = [];
+    
+    watair.console = app.console;
 
     return watair;
 };
