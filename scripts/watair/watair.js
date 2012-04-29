@@ -102,6 +102,7 @@ Watair.prototype =
 					if (this.mvY) { console.log("reached y:" + this.y + " which is close enough to " + this.destY); }
 					this.mvY = false;
 				}
+								
 			});
 
 		sprite.speed = 5;
@@ -136,7 +137,7 @@ Watair.prototype =
         }
 
         this.sprites.push(this.playerSprite);
-        this.sprites.push(Sprite.create(0, 100, 'textures/under-glow-iphone-wallpaper.jpg', this.app, function()
+        this.sprites.push(Sprite.create(0, 150, 'textures/under-glow-iphone-wallpaper.jpg', this.app, function()
 		    {
 		    	var pixelHeight = this.app.pixelHeight;
 		        this.y += 1;
@@ -172,12 +173,13 @@ Watair.prototype =
             console.log('Updating '); // + this.sprites.length);
         }
 */
-
 		var sprites = this.sprites;
         for (var i = sprites.length - 1; i >= 0; i--)
         {
             sprites[i].update();
         }
+        
+        this.collisionDetect();
     },
 
     draw: function drawFn(ctx)
@@ -186,6 +188,51 @@ Watair.prototype =
         {
             this.sprites[i].draw(ctx);
         }
+    },
+    
+    collisionDetect: function detectCollision()
+    {
+    	// collision detection
+		for (var i = this.sprites.length - 1; i >= 0; i--)
+        {
+			var objRadius = 17; //image size is 35px at the moment of writing this code
+			var charRadius = 16; //image size is 32px at the moment of writing this code
+			var collisionDistance = 30; //(adding up radii, approximately)
+			
+			// Using distance calculation equation
+			var actualDistance = 
+				Math.sqrt((this.sprites[i].x - this.playerSprite.x)*(this.sprites[i].x - this.playerSprite.x) 
+						+ (this.sprites[i].y - this.playerSprite.y)*(this.sprites[i].y - this.playerSprite.y));
+			
+			if (this.sprites[i].imageName == 'textures/bubble.png')
+			{
+				
+				if (actualDistance <= collisionDistance)
+				{
+					// Collision
+					// bubble disappear reappear
+					// water moves up/down
+				}
+				
+			}
+			
+			if ((this.sprites[i].imageName == 'textures/under-glow-iphone-wallpaper.jpg')
+					&& (this.playerSprite.imageName != 'textures/fish.png'))
+				{
+					// Termination
+					// Bee loses
+				}
+			
+			if ((this.sprites[i].imageName == 'textures/under-glow-iphone-wallpaper.jpg')
+					&& (this.playerSprite.imageName == 'textures/fish.png')
+					&& (this.playerSprite.y < this.sprites[i].y))
+				{
+					// Termination
+					// Fish loses
+					console.log('Dead Fish');
+				}
+        }
+
     }
 };
 
