@@ -23,11 +23,9 @@ Sprite.prototype =
 
     update: function(){},
 
-    setImage: function(imgRight, imgLeft)
+    setImage: function(img)
     {
-        this.img = imgRight;
-        this.imgRight = imgRight;
-        this.imgLeft = imgLeft;
+        this.img = img;
     },
 
 	debugDraw: function debugDraw(ctx)

@@ -67,7 +67,6 @@ function setCoordinates(id, coordinates) {
 //});
 
 io.sockets.on('connection', function (socket) {
-  console.log(socket.store.store);
   var playerNum = addPlayer(socket.id);
   if (playerNum !== false) 
   {
