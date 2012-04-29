@@ -77,6 +77,10 @@ io.sockets.on('connection', function (socket) {
       console.log(err);
     });
     
+    socket.on('waterLevelChanged', function(change){
+      socket.broadcast.emit('waterLevelChanged', change);
+    });
+    
     socket.on('move', function (coordinates) 
     {
       var player = setCoordinates(socket.id, coordinates);

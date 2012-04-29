@@ -114,6 +114,7 @@ Watair.prototype =
 	mvY: true,
   bubbleUpFn : function(){},
   bubbleDownFn : function(){},
+  waterLevelChanged : function(){},
 
 	/**
 	 * All of the player sprites.
@@ -197,7 +198,7 @@ Watair.prototype =
 		this.playerSprite = this.playerSprites[0];
 		this.opponentSprite = this.playerSprites[1];
 
-        var waterSprite = Sprite.create(CLASS_NO_COLLISION, 0, 150, 'textures/water.jpg', this.app, function()
+        var waterSprite = this.waterSprite = Sprite.create(CLASS_NO_COLLISION, 0, 150, 'textures/water.jpg', this.app, function()
 	    {
 	    	var pixelHeight = this.app.pixelHeight;
 	    	if (0 === this.change) {
@@ -217,8 +218,11 @@ Watair.prototype =
 	        }
 	    });
 	    waterSprite.change = 0;
-	    waterSprite.addChange = function addChange(change) {
+      var watair = this;
+	    waterSprite.addChange = function addChange(change, emit) {
 	    	this.change += change;
+        if (typeof emit != 'undefined')
+          watair.waterLevelChanged(change);
 	    };
 	    this.sprites.push(this.waterSprite = waterSprite);
 
@@ -306,7 +310,7 @@ Watair.prototype =
 					this.createBubble(); // TODO: Bubble appear on correct side
 
 					// water moves up/down
-					this.waterSprite.addChange(theSprite.bubbleValue);
+					this.waterSprite.addChange(theSprite.bubbleValue, true);
           
           if (theSprite.bubbleValue > 0) {
             this.bubbleDownFn();

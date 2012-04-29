@@ -108,6 +108,14 @@ Application.prototype =
             }
           }
         });
+        
+        socket.on('waterLevelChanged', function(change){
+          app.watair.waterSprite.addChange(change);
+        });
+        
+        app.watair.waterLevelChanged = function(change) {
+          socket.emit('waterLevelChanged', change);
+        }
 
     },
 
