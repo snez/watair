@@ -2,15 +2,64 @@
 function Sprite() {}
 Sprite.prototype =
 {
+	/**
+	 * Sprite animation frames.  null indicates this is not an animated sprite.
+	 */
+	animFrames:null,
+
+	/**
+	 * Which frame currently showing.
+	 */
+	frameNum:0,
+
     update: function(){},
 
-    setImage: function (img)
+    setImage: function(img)
     {
         this.img = img;
+    },
+
+	debugDraw: function debugDraw(ctx)
+	{
+        // Debug rendering by drawing boxes
+        ctx.beginPath();
+        ctx.rect(this.x - 2, this.y - 2, 36, 36);
+        // ctx.fillStyle = "#8ED6FF";
+	    // ctx.fill();
+	    ctx.lineWidth = 4;
+	    ctx.strokeStyle = "black";
+	    ctx.stroke();
+	},
+
+    setAnimFrames: function(frames)
+    {
+    	this.animFrames = frames;
+    	this.numFrames = frames.length;
+    	console.log("animFrames:" + frames);
+    	this.draw = function animate(ctx)
+    	{
+    		// this.debugDraw(ctx);
+    		var frameNum = this.frameNum;
+    		if (++frameNum >= this.numFrames) {
+    			frameNum = 0;
+    		}
+    		var img = this.animFrames[frameNum];
+    		ctx.drawImage(img, this.x, this.y);
+    		this.frameNum = frameNum;
+    	};
+    },
+
+    draw : function(ctx)
+    {
+    	// this.debugDraw(ctx);
+    	ctx.drawImage(this.img, this.x, this.y);
     }
 
 };
 
+/**
+ * @param imageName The image filename.  If contains a number, this is an animated sprite and the number represents the last frame number.
+ */
 Sprite.create = function spriteCreateFn(x, y, imageName, app, updateFunction)
 {
     var c = new Sprite();
@@ -26,6 +75,7 @@ Sprite.create = function spriteCreateFn(x, y, imageName, app, updateFunction)
     return c;
 };
 
+var FISH_FILENAME = "textures/fish anim/fish anim00012.png";
 
 //
 // Watair:
@@ -37,7 +87,7 @@ Watair.prototype =
 	mvY: true,
 
 	playerSprite : function(){
-		var sprite = Sprite.create(100, 100, 'textures/fish.png', this.app, function()
+		var sprite = Sprite.create(100, 100, FISH_FILENAME, this.app, function()
 			{
 				if (this.mvX && Math.abs(this.x - this.destX) > 9)
 				{
@@ -53,7 +103,7 @@ Watair.prototype =
 					if (this.mvY) { console.log("reached y:" + this.y + " which is close enough to " + this.destY); }
 					this.mvY = false;
 				}
-								
+
 			});
 
 		sprite.speed = 5;
@@ -98,13 +148,13 @@ Watair.prototype =
 		        	this.y = 100;
 		        }
 		    }));
-        
+
         // bubble placement
         for (var j = 0; j < 10; j++)
         {
         	var randomX = Math.floor((Math.random()*240)+1);
             var randomY = Math.floor((Math.random()*320)+1);
-            
+
             this.sprites.push(Sprite.create(randomX, randomY, 'textures/bubble.png', this.app, function(){}));
         }
 
@@ -129,32 +179,18 @@ Watair.prototype =
         {
             sprites[i].update();
         }
-        
+
         this.collisionDetect();
     },
 
     draw: function drawFn(ctx)
     {
-        var sprite;
         for (var i = this.sprites.length - 1; i >= 0; i--)
         {
-            sprite = this.sprites[i];
-
-/*
-            // Debug rendering by drawing boxes
-            ctx.beginPath();
-            ctx.rect(sprite.x - 2, sprite.y - 2, 36, 36);
-            // ctx.fillStyle = "#8ED6FF";
-		    // ctx.fill();
-		    ctx.lineWidth = 4;
-		    ctx.strokeStyle = "black";
-		    ctx.stroke();
-*/
-
-            ctx.drawImage(sprite.img, sprite.x, sprite.y);
+            this.sprites[i].draw(ctx);
         }
     },
-    
+
     collisionDetect: function detectCollision()
     {
     	// collision detection
@@ -163,33 +199,33 @@ Watair.prototype =
 			var objRadius = 17; //image size is 35px at the moment of writing this code
 			var charRadius = 16; //image size is 32px at the moment of writing this code
 			var collisionDistance = 30; //(adding up radii, approximately)
-			
+
 			// Using distance calculation equation
-			var actualDistance = 
-				Math.sqrt((this.sprites[i].x - this.playerSprite.x)*(this.sprites[i].x - this.playerSprite.x) 
+			var actualDistance =
+				Math.sqrt((this.sprites[i].x - this.playerSprite.x)*(this.sprites[i].x - this.playerSprite.x)
 						+ (this.sprites[i].y - this.playerSprite.y)*(this.sprites[i].y - this.playerSprite.y));
-			
+
 			if (this.sprites[i].imageName == 'textures/bubble.png')
 			{
-				
+
 				if (actualDistance <= collisionDistance)
 				{
 					// Collision
 					// bubble disappear reappear
 					// water moves up/down
 				}
-				
+
 			}
-			
+
 			if ((this.sprites[i].imageName == 'textures/under-glow-iphone-wallpaper.jpg')
-					&& (this.playerSprite.imageName != 'textures/fish.png'))
+					&& (this.playerSprite.imageName != FISH_FILENAME))
 				{
 					// Termination
 					// Bee loses
 				}
-			
+
 			if ((this.sprites[i].imageName == 'textures/under-glow-iphone-wallpaper.jpg')
-					&& (this.playerSprite.imageName == 'textures/fish.png')
+					&& (this.playerSprite.imageName == FISH_FILENAME)
 					&& (this.playerSprite.y < this.sprites[i].y))
 				{
 					// Termination

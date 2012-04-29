@@ -170,30 +170,80 @@ Application.prototype =
 
         }
 
+		function loadImage(sprite, imageName, images)
+		{
+			imageURL = mappingTable[imageName];
+            if (imageURL)
+            {
+                image = images[imageName];
+                if (!image)
+                {
+                    image = new Image();
+                }
+                image.src = imageURL;
+                images[imageName] = image;
+                return image;
+            } else {
+            	var console = window.console;
+	            if (console)
+	            {
+	                console.error('Image for sprite ' + sprite + ' missing: ', sprite.imageName);
+	            }
+            }
+		}
+
+		function pad(number, length)
+		{
+		    var str = '' + number;
+		    while (str.length < length)
+		    {
+		        str = '0' + str;
+		    }
+
+		    return str;
+		}
+
+		function getAnimatedFilenames(filename)
+		{
+			var matches = filename.match(/([a-z \/]+)(\d+)\.([a-z]+)/);
+			if (null === matches) {
+				return null;
+			}
+
+			var max = matches[2], paddedNum, animFilenames = [];
+			for (var i = 1; i <= max; i++) {
+				paddedNum = pad(i, 4);
+				frameName = matches[1] + paddedNum + "." + matches[3];
+				animFilenames.push(frameName);
+			}
+			return animFilenames;
+		}
+
+		function loadAnimFrames(sprite, images, animFilenames, animFrames) {
+        	var animFrames = [];
+        	for (var i = 0; i < animFilenames.length; i++)
+        	{
+        		image = loadImage(sprite, animFilenames[i], images);
+        		animFrames.push(image);
+        	}
+        	sprite.setAnimFrames(animFrames);
+		}
 
 		function loadSprites(sprites, images) {
-	        var sprite, imageURL, image;
+	        var sprite, image, imageName, animFilenames;
 
 	        for (var i = sprites.length - 1; i >= 0; i--)
 	        {
 	            sprite = sprites[i];
-	            imageURL = mappingTable[sprite.imageName];
-	            if (imageURL)
+	            imageName = sprite.imageName;
+	            animFilenames = getAnimatedFilenames(imageName);
+	            if (animFilenames)
 	            {
-	                image = images[sprite.imageName];
-	                if (!image)
-	                {
-	                    image = new Image();
-	                }
-	                image.src = imageURL;
-	                sprite.setImage(image);
-	                images[sprite.imageName] = image;
+	            	window.console.log("image \"" + imageName + "\" is animated: " + animFilenames);
+	            	loadAnimFrames(sprite, images, animFilenames, animFilenames);
 	            } else {
-	            	var console = window.console;
-		            if (console)
-		            {
-		                console.error('Image for sprite ' + sprite + ' missing: ', sprite.imageName);
-		            }
+		            image = loadImage(sprite, imageName, images);
+		            sprite.setImage(image);
 	            }
 	        }
 		}
