@@ -24,6 +24,11 @@ Application.prototype =
 {
   soundBubbleUp : false,
   soundBubbleDown : false,
+  soundTitleMusic : false,
+  soundMainMusic : false,
+  soundScoreScreen : false,
+  soundWinner : false,
+  soundLoser : false,
   
     gameSettings : {
         width : 30,  // Must be a multiple of 2
@@ -608,13 +613,29 @@ this.backgroundImage = new Image();
       
       
       // Create the sound for the source to emit
+      
+      soundDevice.createSound({
+        src: this.mappingTable.getURL("sounds/TitleMusic.mp3"),
+        onload : function (sound)
+        {
+          if (sound)
+          {
+            app.soundTitleMusic = sound;
+            backgroundSoundSource.play(app.soundTitleMusic);
+          } else {
+            console.log('Failed to load sounds');
+          }
+        }
+      });
+      
       soundDevice.createSound({
         src: this.mappingTable.getURL("sounds/MainGameMusic.mp3"),
         onload : function (sound)
         {
           if (sound)
           {
-            backgroundSoundSource.play(sound);
+//            backgroundSoundSource.play(sound);
+            app.soundMainMusic = sound;
           } else {
             console.log('Failed to load sounds');
           }
@@ -646,6 +667,47 @@ this.backgroundImage = new Image();
           }
         }
       });
+      
+      soundDevice.createSound({
+        src: this.mappingTable.getURL("sounds/Loser.mp3"),
+        onload : function (sound)
+        {
+          if (sound)
+          {
+            app.soundLooser = sound;
+          } else {
+            console.log('Failed to load sounds');
+          }
+        }
+      });
+      
+      soundDevice.createSound({
+        src: this.mappingTable.getURL("sounds/Winner.mp3"),
+        onload : function (sound)
+        {
+          if (sound)
+          {
+            app.soundWinner = sound;
+          } else {
+            console.log('Failed to load sounds');
+          }
+        }
+      });
+      
+      soundDevice.createSound({
+        src: this.mappingTable.getURL("sounds/ScoreScreen.mp3"),
+        onload : function (sound)
+        {
+          if (sound)
+          {
+            app.soundScoreScreen = sound;
+          } else {
+            console.log('Failed to load sounds');
+          }
+        }
+      });
+      
+      
     },
 
 
