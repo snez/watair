@@ -151,6 +151,7 @@ Watair.prototype =
 		this.playerSprites.push(buildPlayer(100, 100, this.sprites));
 		this.playerSprites.push(buildPlayer(120, 200, this.sprites));
 		this.playerSprite = this.playerSprites[0];
+    this.opponentSprite = this.playerSprites[1];
 
         this.sprites.push(Sprite.create(0, 150, 'textures/under-glow-iphone-wallpaper.jpg', this.app, function()
 		    {
@@ -175,8 +176,19 @@ Watair.prototype =
     },
 
     movePlayerTo : function moveTo(x, y) {
-    	console.log("moving to " + x + ", " + y);
-		this.playerSprite.setDestination(x, y);
+      this.playerSprite.setDestination(x, y);
+    },
+    moveOpponentTo : function moveTo(x, y) {
+      this.opponentSprite.setDestination(x, y);
+    },
+    setPlayer : function setPlayer(num) {
+      if (num == 1) {
+        this.playerSprite = this.playerSprites[0];
+        this.opponentSprite = this.playerSprites[1];
+      } else {
+        this.playerSprite = this.playerSprites[1];
+        this.opponentSprite = this.playerSprites[0];
+      }
     },
 
     update: function updateFn()
