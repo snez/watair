@@ -616,6 +616,7 @@ Application.prototype =
           relative : false,
           pitch : 1.0
       });
+      var playerOneSoundSource = this.playerOneSoundSource;
 
 
       // Create the sound for the source to emit
@@ -655,6 +656,11 @@ Application.prototype =
           if (sound)
           {
             app.soundBubbleDown = sound;
+            app.watair.bubbleDownFn = function() {
+                            console.log('bubble down');
+
+              playerOneSoundSource.play(sound);
+            }
           } else {
             app.console.log('Failed to load sounds');
           }
@@ -668,6 +674,10 @@ Application.prototype =
           if (sound)
           {
             app.soundBubbleUp = sound;
+            app.watair.bubbleUpFn = function() {
+              console.log('bubble up');
+              playerOneSoundSource.play(sound);
+            }
           } else {
             app.console.log('Failed to load sounds');
           }
