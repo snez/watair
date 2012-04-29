@@ -89,6 +89,7 @@ Application.prototype =
 
         var endpoint = 'http://10.10.2.44:8083';
         var socket = io.connect(endpoint);
+        var app = this;
         this.socket = socket;
 
         // Socket events
@@ -103,8 +104,12 @@ Application.prototype =
         socket.on('msg', function(data) {
           if (typeof data.type != 'undefined') {
             if (data.type == 'move') {
+              app.watair.moveOpponentTo(data.player.coordinates.x, data.player.coordinates.y);
               console.log('Player has moved');
               console.log('x: '+ data.player.coordinates.x + ', y: '+data.player.coordinates.y);
+            }
+            if (data.type == 'setPlayer') {
+              app.watair.setPlayer(num);
             }
           }
           console.log(data);
