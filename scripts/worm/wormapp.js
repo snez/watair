@@ -85,6 +85,7 @@ Application.prototype =
             {func : this.createHTMLWriter, isDependent : true, noCallback : true},
             {func : this.enterLoadingLoop, isDependent : true}
         ];
+        
         this.enterCallbackChain(this, creationFunctions);
 
         var endpoint = 'http://10.10.2.44:8083';
@@ -94,11 +95,11 @@ Application.prototype =
 
         // Socket events
         socket.on('connect', function(){
-          console.log("Connected to server!");
+          app.console.log("Connected to server!");
         });
 
         socket.on('disconnect', function(s){
-          console.log("Disconnected from server!");
+          app.console.log("Disconnected from server!");
         });
 
         socket.on('msg', function(data) {
@@ -152,6 +153,7 @@ Application.prototype =
 
     loadImages : function loadImagesFn(mappingTable)
     {
+        var app = this;
     	this.images = [];
 
 		var backgroundImageName = 'textures/bg.jpg';
@@ -164,11 +166,7 @@ Application.prototype =
         }
         else
         {
-            var console = window.console;
-            if (console)
-            {
-                console.error('Image missing: ', backgroundImageName);
-            }
+            app.console.error('Image missing: ', backgroundImageName);
 
         }
 
@@ -186,11 +184,8 @@ Application.prototype =
                 images[imageName] = image;
                 return image;
             } else {
-            	var console = window.console;
-	            if (console)
-	            {
-	                console.error('Image for sprite ' + sprite + ' missing: ', sprite.imageName);
-	            }
+            	app.console.error('Image for sprite ' + sprite + ' missing: ', sprite.imageName);
+                return null;
             }
 		}
 
@@ -221,7 +216,7 @@ Application.prototype =
 			return animFilenames;
 		}
 
-		function loadAnimFrames(sprite, images, animFilenames, animFrames) {
+		function loadAnimFrames(sprite, images, animFilenames, aFrames) {
         	var animFrames = [];
         	for (var i = 0; i < animFilenames.length; i++)
         	{
@@ -645,7 +640,7 @@ Application.prototype =
             app.soundTitleMusic = sound;
             backgroundSoundSource.play(app.soundTitleMusic);
           } else {
-            console.log('Failed to load sounds');
+            app.console.log('Failed to load sounds');
           }
         }
       });
@@ -659,7 +654,7 @@ Application.prototype =
 //            backgroundSoundSource.play(sound);
             app.soundMainMusic = sound;
           } else {
-            console.log('Failed to load sounds');
+            app.console.log('Failed to load sounds');
           }
         }
       });
@@ -672,7 +667,7 @@ Application.prototype =
           {
             app.soundBubbleDown = sound;
           } else {
-            console.log('Failed to load sounds');
+            app.console.log('Failed to load sounds');
           }
         }
       });
@@ -685,7 +680,7 @@ Application.prototype =
           {
             app.soundBubbleUp = sound;
           } else {
-            console.log('Failed to load sounds');
+            app.console.log('Failed to load sounds');
           }
         }
       });
@@ -698,7 +693,7 @@ Application.prototype =
           {
             app.soundLooser = sound;
           } else {
-            console.log('Failed to load sounds');
+            app.console.log('Failed to load sounds');
           }
         }
       });
@@ -711,7 +706,7 @@ Application.prototype =
           {
             app.soundWinner = sound;
           } else {
-            console.log('Failed to load sounds');
+            app.console.log('Failed to load sounds');
           }
         }
       });
@@ -724,7 +719,7 @@ Application.prototype =
           {
             app.soundScoreScreen = sound;
           } else {
-            console.log('Failed to load sounds');
+            app.console.log('Failed to load sounds');
           }
         }
       });
@@ -790,7 +785,7 @@ Application.prototype =
 
         function onMouseDown(keynum)
         {
-        	console.log("onMouseDown");
+        	app.console.log("onMouseDown");
           //game.onMouseDown(keynum);
         }
 
@@ -1344,6 +1339,20 @@ Application.prototype =
 Application.create = function applicationCreateFn(runInEngine)
 {
     var application = new Application();
+    
+    var console = window.console;
+    if (console)
+    {
+        application.console = console;
+    }
+    else
+    {
+        application.console = {
+            log: function () {},
+            warn: function () {},
+            error: function () {}
+        };
+    }
 
     // Ensures shutdown function is only called once
     application.hasShutDown = false;

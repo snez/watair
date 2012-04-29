@@ -85,6 +85,8 @@ Sprite.create = function spriteCreateFn(x, y, imageName, app, updateFunction)
     c.app = app;
     c.img = new Image();
     c.imageName = imageName ? imageName: 'textures/cratebubble_up_1.png';
+    
+    c.console = app.console;
 
     c.update = updateFunction;
 
@@ -115,14 +117,12 @@ Watair.prototype =
 
     init: function initFn()
     {
-        var console = window.console;
-        if (console)
-        {
-            console.log('Init');
-        }
+        this.console.log('Init');
+        
+        var that = this;
 
 		function buildPlayer(x, y, filename, allSprites) {
-			var sprite = Sprite.create(x, y, filename, this.app, function()
+			var sprite = Sprite.create(x, y, filename, that.app, function()
 				{
 					if (this.mvX && Math.abs(this.x - this.destX) > 9)
 					{
@@ -159,7 +159,6 @@ Watair.prototype =
           } else {
             sprite.setDirection('right');
           }
-		    	console.log("delta:" + this.dx + ", " + this.dy);
 		    	this.mvX = this.mvY = true;
 		    };
 
@@ -275,7 +274,7 @@ Watair.prototype =
 				{
 					// Termination
 					// Fish loses
-					console.log('Dead Fish');
+					this.console.log('Dead Fish');
 				}
         }
 
@@ -288,6 +287,8 @@ Watair.create = function watairCreateFn(gameSettings, app)
 
     watair.app = app;
     watair.sprites = [];
+    
+    watair.console = app.console;
 
     return watair;
 };
