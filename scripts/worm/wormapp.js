@@ -76,15 +76,12 @@ Application.prototype =
         [
             {func : this.createGameSession, isDependent : false},
             {func : this.createMappingTable, isDependent : true},
-            {func : this.createLeaderboardManager, isDependent : true},
-            {func : this.createBadgeManager, isDependent : false, noCallback : true},
-            {func : this.createGameLeaderboards, isDependent : true},
-            {func : this.createGameBadges, isDependent : false},
             {func : this.createGameSounds, isDependent : false, noCallback : true },
             {func : this.createGame, isDependent : true, noCallback : true},
             {func : this.createHTMLWriter, isDependent : true, noCallback : true},
             {func : this.enterLoadingLoop, isDependent : true}
         ];
+        
         this.enterCallbackChain(this, creationFunctions);
 
         var endpoint = 'http://10.10.2.44:8083';
@@ -94,25 +91,22 @@ Application.prototype =
 
         // Socket events
         socket.on('connect', function(){
-          console.log("Connected to server!");
+//          app.console.log("Connected to server!");
         });
 
         socket.on('disconnect', function(s){
-          console.log("Disconnected from server!");
+//          app.console.log("Disconnected from server!");
         });
 
         socket.on('msg', function(data) {
           if (typeof data.type != 'undefined') {
             if (data.type == 'move') {
               app.watair.moveOpponentTo(data.player.coordinates.x, data.player.coordinates.y);
-              console.log('Player has moved');
-              console.log('x: '+ data.player.coordinates.x + ', y: '+data.player.coordinates.y);
             }
             if (data.type == 'setPlayer') {
               app.watair.setPlayer(data.num);
             }
           }
-          console.log(data);
         });
 
     },
@@ -124,7 +118,7 @@ Application.prototype =
 
         devices.inputDevice.update();
 
-        devices.networkDevice.update();
+        //devices.networkDevice.update();
 
         var heartbeat = false;
 
@@ -132,7 +126,7 @@ Application.prototype =
         {
             this.previousGameUpdateTime = currentTime;
 
-            this.checkOthers();
+            //this.checkOthers();
 
             heartbeat = true;
         }
@@ -141,11 +135,11 @@ Application.prototype =
         {
             this.watair.update();
 
-            this.leaderboards.update(currentTime);
+            //this.leaderboards.update(currentTime);
 
-            this.badges.update(currentTime);
+            //this.badges.update(currentTime);
 
-            this.htmlWriter.update();
+            //this.htmlWriter.update();
 
             return true;
         }
@@ -155,6 +149,7 @@ Application.prototype =
 
     loadImages : function loadImagesFn(mappingTable)
     {
+        var app = this;
     	this.images = [];
 
 		var backgroundImageName = 'textures/bg.jpg';
@@ -167,11 +162,7 @@ Application.prototype =
         }
         else
         {
-            var console = window.console;
-            if (console)
-            {
-                console.error('Image missing: ', backgroundImageName);
-            }
+            app.console.error('Image missing: ', backgroundImageName);
 
         }
 
@@ -189,11 +180,8 @@ Application.prototype =
                 images[imageName] = image;
                 return image;
             } else {
-            	var console = window.console;
-	            if (console)
-	            {
-	                console.error('Image for sprite ' + sprite + ' missing: ', sprite.imageName);
-	            }
+            	app.console.error('Image for sprite ' + sprite + ' missing: ', sprite.imageName);
+                return null;
             }
 		}
 
@@ -224,7 +212,7 @@ Application.prototype =
 			return animFilenames;
 		}
 
-		function loadAnimFrames(sprite, images, animFilenames, animFrames) {
+		function loadAnimFrames(sprite, images, animFilenames, aFrames) {
         	var animFrames = [];
         	for (var i = 0; i < animFilenames.length; i++)
         	{
@@ -244,7 +232,6 @@ Application.prototype =
 	            animFilenames = getAnimatedFilenames(imageName);
 	            if (animFilenames)
 	            {
-	            	window.console.log("image \"" + imageName + "\" is animated: " + animFilenames);
 	            	loadAnimFrames(sprite, images, animFilenames, animFilenames);
 	            } else {
 		            image = loadImage(sprite, imageName, images);
@@ -341,13 +328,6 @@ Application.prototype =
         }
 
         canvas2dContext.clearRect(0 , 0, this.width, this.height);
-
-        // Clear background to red or grey
-        canvas2dContext.fillStyle = "#555500";
-        canvas2dContext.fillRect(0, 0, 240, 320);
-
-        canvas2dContext.fillStyle = "#000000";
-        canvas2dContext.fillText("Height: " + canvas.height + ', Width: ' + canvas.width, 10, 20);
 
         canvas2dContext.drawImage(this.backgroundImage , 0, 0);
         this.watair.draw(canvas2dContext);
@@ -647,9 +627,9 @@ Application.prototype =
           if (sound)
           {
             app.soundTitleMusic = sound;
-            backgroundSoundSource.play(app.soundTitleMusic);
+//            backgroundSoundSource.play(app.soundTitleMusic);
           } else {
-            console.log('Failed to load sounds');
+            app.console.log('Failed to load sounds');
           }
         }
       });
@@ -660,10 +640,10 @@ Application.prototype =
         {
           if (sound)
           {
-//            backgroundSoundSource.play(sound);
+            backgroundSoundSource.play(sound);
             app.soundMainMusic = sound;
           } else {
-            console.log('Failed to load sounds');
+            app.console.log('Failed to load sounds');
           }
         }
       });
@@ -676,7 +656,7 @@ Application.prototype =
           {
             app.soundBubbleDown = sound;
           } else {
-            console.log('Failed to load sounds');
+            app.console.log('Failed to load sounds');
           }
         }
       });
@@ -689,7 +669,7 @@ Application.prototype =
           {
             app.soundBubbleUp = sound;
           } else {
-            console.log('Failed to load sounds');
+            app.console.log('Failed to load sounds');
           }
         }
       });
@@ -702,7 +682,7 @@ Application.prototype =
           {
             app.soundLooser = sound;
           } else {
-            console.log('Failed to load sounds');
+            app.console.log('Failed to load sounds');
           }
         }
       });
@@ -715,7 +695,7 @@ Application.prototype =
           {
             app.soundWinner = sound;
           } else {
-            console.log('Failed to load sounds');
+            app.console.log('Failed to load sounds');
           }
         }
       });
@@ -728,7 +708,7 @@ Application.prototype =
           {
             app.soundScoreScreen = sound;
           } else {
-            console.log('Failed to load sounds');
+            app.console.log('Failed to load sounds');
           }
         }
       });
@@ -765,7 +745,7 @@ Application.prototype =
         // Closure for keyDown callback
         function onKeyDown(keynum)
         {
-            game.onKeyDown(keynum);
+            //game.onKeyDown(keynum);
             switch (keynum) {
               case 200: // Left
                 var coordinates = { x: 1, y: 1 };
@@ -788,14 +768,13 @@ Application.prototype =
                 socket.emit('move', coordinates);
                 break;
               default:
-                console.log('Unknown keynum:' +keynum);
                 break;
             }
         }
 
         function onMouseDown(keynum)
         {
-        	console.log("onMouseDown");
+        	app.console.log("onMouseDown");
           //game.onMouseDown(keynum);
         }
 
@@ -957,7 +936,7 @@ Application.prototype =
         {
             TurbulenzEngine.clearInterval(this.intervalID);
 
-            this.createMultiplayerSession();
+            //this.createMultiplayerSession();
 
             this.intervalID = TurbulenzEngine.setInterval(localConnectingStateLoop, (1000 / 10));
         }
@@ -973,37 +952,39 @@ Application.prototype =
             return that.mainStateLoop();
         }
 
-        this.devices.networkDevice.update();
-
-        // If joined game
-        if (this.game.myWormIndex >= 0)
-        {
-            TurbulenzEngine.clearInterval(this.intervalID);
+        //this.devices.networkDevice.update();
+        
+        TurbulenzEngine.clearInterval(this.intervalID);
 
             this.appScene.setupScene();
 
             this.intervalID = TurbulenzEngine.setInterval(localMainStateLoop, (1000 / 60));
-        }
-        else
-        {
-            // If connected to session
-            if (this.multiplayerSession)
-            {
-                var currentTime = TurbulenzEngine.time;
-                var connectionTime = this.connectionTime;
-                var staleTime = this.staleTime;
-                if ((connectionTime + staleTime) < currentTime)
-                {
-                    this.isHost = true;
-                    this.game.start();
-                }
-                else if ((connectionTime + (staleTime * 0.5)) < currentTime)
-                {
-                    // Keep requesting to join to avoid problems when starting in the middle of a host transition
-                    this.multiplayerSession.sendToAll(this.networkIds.joining);
-                }
-            }
-        }
+
+        //// If joined game
+        //if (this.game.myWormIndex >= 0)
+        //{
+        //    
+        //}
+        //else
+        //{
+        //    // If connected to session
+        //    if (this.multiplayerSession)
+        //    {
+        //        var currentTime = TurbulenzEngine.time;
+        //        var connectionTime = this.connectionTime;
+        //        var staleTime = this.staleTime;
+        //        if ((connectionTime + staleTime) < currentTime)
+        //        {
+        //            this.isHost = true;
+        //            this.game.start();
+        //        }
+        //        else if ((connectionTime + (staleTime * 0.5)) < currentTime)
+        //        {
+        //            // Keep requesting to join to avoid problems when starting in the middle of a host transition
+        //            this.multiplayerSession.sendToAll(this.networkIds.joining);
+        //        }
+        //    }
+        //}
     },
 
     mainStateLoop : function mainStateLoopFn()
@@ -1339,7 +1320,6 @@ Application.prototype =
     	x = (x - 16) / this.scaleX;
     	y = (y - 16) / this.scaleY;
 
-      console.log("touch: " + x + ", " + y);
       this.watair.movePlayerTo(x, y);
       this.socket.emit('move', { x: x, y: y });
     }
@@ -1350,6 +1330,20 @@ Application.prototype =
 Application.create = function applicationCreateFn(runInEngine)
 {
     var application = new Application();
+    
+    var console = window.console;
+    if (console)
+    {
+        application.console = console;
+    }
+    else
+    {
+        application.console = {
+            log: function () {},
+            warn: function () {},
+            error: function () {}
+        };
+    }
 
     // Ensures shutdown function is only called once
     application.hasShutDown = false;

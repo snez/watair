@@ -15,6 +15,15 @@ Sprite.prototype =
 	 * Sprite animation frames.  null indicates this is not an animated sprite.
 	 */
 	animFrames:null,
+  directionChanged : false,
+  facing : 'right',
+  setDirection : function(direction) {
+    if (direction != this.facing) {
+      this.facing = direction;
+      this.directionChanged = true;
+    }
+  },
+
 
 	/**
 	 * Which frame currently showing.
@@ -23,9 +32,11 @@ Sprite.prototype =
 
     update: function(){},
 
-    setImage: function(img)
+    setImage: function(imgRight, imgLeft)
     {
-        this.img = img;
+        this.img = imgRight;
+        this.imgRight = imgRight;
+        this.imgLeft = imgLeft;
     },
 
 	debugDraw: function debugDraw(ctx)
@@ -44,7 +55,6 @@ Sprite.prototype =
     {
     	this.animFrames = frames;
     	this.numFrames = frames.length;
-    	console.log("animFrames:" + frames);
     	this.draw = function animate(ctx)
     	{
     		// this.debugDraw(ctx);
@@ -61,7 +71,8 @@ Sprite.prototype =
     draw : function(ctx)
     {
     	// this.debugDraw(ctx);
-    	ctx.drawImage(this.img, this.x, this.y);
+      ctx.drawImage(this.img, this.x, this.y);
+
     }
 
 };
@@ -79,6 +90,8 @@ Sprite.create = function spriteCreateFn(type, x, y, imageName, app, updateFuncti
     c.app = app;
     c.img = new Image();
     c.imageName = imageName ? imageName: 'textures/cratebubble_up_1.png';
+
+    // c.console = app.console;
 
     c.update = updateFunction;
 
@@ -127,11 +140,7 @@ Watair.prototype =
 
     init: function initFn()
     {
-        var console = window.console;
-        if (console)
-        {
-            console.log('Init');
-        }
+        var that = this;
 
 		function buildPlayer(x, y, filename, allSprites) {
 			var sprite = Sprite.create(CLASS_PLAYER, x, y, filename, this.app, function()
@@ -140,14 +149,12 @@ Watair.prototype =
 					{
 						this.x += this.dx;
 					} else {
-						if (this.mvX) { console.log("reached X:" + this.x + " which is close enough to " + this.destX); }
 						this.mvX = false;
 					}
 					if (this.mvY && Math.abs(this.y - this.destY) > 9)
 					{
 						this.y += this.dy;
 					} else {
-						if (this.mvY) { console.log("reached y:" + this.y + " which is close enough to " + this.destY); }
 						this.mvY = false;
 					}
 
@@ -168,7 +175,11 @@ Watair.prototype =
 		    	var theta = Math.atan2(h, w);
 		    	this.dx = this.speed * Math.cos(theta);
 		    	this.dy = this.speed * Math.sin(theta);
-		    	console.log("delta:" + this.dx + ", " + this.dy);
+          if (h < 0) {
+            sprite.setDirection('left');
+          } else {
+            sprite.setDirection('right');
+          }
 		    	this.mvX = this.mvY = true;
 		    };
 
@@ -277,7 +288,7 @@ Watair.prototype =
 				if (actualDistance <= collisionDistance)
 				{
 					// Collision
-					console.log("pop");
+					// console.log("pop");
 
 					// bubble disappear
 					this.sprites.splice(i--, 1); // i-- sets position to redo this bubble
@@ -309,7 +320,7 @@ Watair.prototype =
 				{
 					// Termination
 					// Fish loses
-					console.log('Dead Fish');
+					// this.console.log('Dead Fish');
 				}
         }
 
@@ -322,6 +333,8 @@ Watair.create = function watairCreateFn(gameSettings, app)
 
     watair.app = app;
     watair.sprites = [];
+
+    watair.console = app.console;
 
     return watair;
 };
