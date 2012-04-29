@@ -86,48 +86,15 @@ Watair.prototype =
 	mvX: true,
 	mvY: true,
 
-	playerSprite : function(){
-		var sprite = Sprite.create(100, 100, FISH_FILENAME, this.app, function()
-			{
-				if (this.mvX && Math.abs(this.x - this.destX) > 9)
-				{
-					this.x += this.dx;
-				} else {
-					if (this.mvX) { console.log("reached X:" + this.x + " which is close enough to " + this.destX); }
-					this.mvX = false;
-				}
-				if (this.mvY && Math.abs(this.y - this.destY) > 9)
-				{
-					this.y += this.dy;
-				} else {
-					if (this.mvY) { console.log("reached y:" + this.y + " which is close enough to " + this.destY); }
-					this.mvY = false;
-				}
+	/**
+	 * All of the player sprites.
+	 */
+	playerSprites : [],
 
-			});
-
-		sprite.speed = 5;
-		sprite.destX = 150;
-		sprite.destY = 150;
-		sprite.dx = 0;
-		sprite.dy = 0;
-
-	    sprite.setDestination = function(x, y)
-	    {
-	    	this.destX = x; // * window.app.scaleX;
-	    	this.destY = y; // * window.app.scaleY;
-	    	var w = x - this.x;
-	    	var h = y - this.y;
-	    	// var theta = Math.atan(h/w);
-	    	var theta = Math.atan2(h, w);
-	    	this.dx = this.speed * Math.cos(theta);
-	    	this.dy = this.speed * Math.sin(theta);
-	    	console.log("delta:" + this.dx + ", " + this.dy);
-	    	this.mvX = this.mvY = true;
-	    };
-
-		return sprite;
-	}(),
+	/**
+	 * The sprite that the player controls.
+	 */
+	playerSprite: null,
 
     init: function initFn()
     {
@@ -137,7 +104,54 @@ Watair.prototype =
             console.log('Init');
         }
 
-        this.sprites.push(this.playerSprite);
+		function buildPlayer(x, y, allSprites) {
+			var sprite = Sprite.create(x, y, FISH_FILENAME, this.app, function()
+				{
+					if (this.mvX && Math.abs(this.x - this.destX) > 9)
+					{
+						this.x += this.dx;
+					} else {
+						if (this.mvX) { console.log("reached X:" + this.x + " which is close enough to " + this.destX); }
+						this.mvX = false;
+					}
+					if (this.mvY && Math.abs(this.y - this.destY) > 9)
+					{
+						this.y += this.dy;
+					} else {
+						if (this.mvY) { console.log("reached y:" + this.y + " which is close enough to " + this.destY); }
+						this.mvY = false;
+					}
+
+				});
+
+			sprite.speed = 5;
+			sprite.destX = 150;
+			sprite.destY = 150;
+			sprite.dx = 0;
+			sprite.dy = 0;
+
+		    sprite.setDestination = function(x, y)
+		    {
+		    	this.destX = x; // * window.app.scaleX;
+		    	this.destY = y; // * window.app.scaleY;
+		    	var w = x - this.x;
+		    	var h = y - this.y;
+		    	// var theta = Math.atan(h/w);
+		    	var theta = Math.atan2(h, w);
+		    	this.dx = this.speed * Math.cos(theta);
+		    	this.dy = this.speed * Math.sin(theta);
+		    	console.log("delta:" + this.dx + ", " + this.dy);
+		    	this.mvX = this.mvY = true;
+		    };
+
+			allSprites.push(sprite);
+			return sprite;
+		}
+
+		this.playerSprites.push(buildPlayer(100, 100, this.sprites));
+		this.playerSprites.push(buildPlayer(120, 200, this.sprites));
+		this.playerSprite = this.playerSprites[0];
+
         this.sprites.push(Sprite.create(0, 150, 'textures/under-glow-iphone-wallpaper.jpg', this.app, function()
 		    {
 		    	var pixelHeight = this.app.pixelHeight;
