@@ -192,7 +192,7 @@ Application.prototype =
 	            	var console = window.console;
 		            if (console)
 		            {
-		                console.error('Image for sprite ' + sprite + ' missing: ', imageName);
+		                console.error('Image for sprite ' + sprite + ' missing: ', sprite.imageName);
 		            }
 	            }
 	        }
