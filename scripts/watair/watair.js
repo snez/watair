@@ -33,16 +33,25 @@ Sprite.create = function spriteCreateFn(x, y, imageName, app, updateFunction)
 function Watair() {}
 Watair.prototype =
 {
+	mvX: true,
+	mvY: true,
+
 	playerSprite : function(){
 		var sprite = Sprite.create(100, 100, 'textures/fish.png', this.app, function()
 			{
-				if (this.x !== this.destX)
+				if (this.mvX && Math.abs(this.x - this.destX) > 9)
 				{
 					this.x += this.dx;
+				} else {
+					if (this.mvX) { console.log("reached X:" + this.x + " which is close enough to " + this.destX); }
+					this.mvX = false;
 				}
-				if (this.y !== this.destY)
+				if (this.mvY && Math.abs(this.y - this.destY) > 9)
 				{
 					this.y += this.dy;
+				} else {
+					if (this.mvY) { console.log("reached y:" + this.y + " which is close enough to " + this.destY); }
+					this.mvY = false;
 				}
 			});
 
@@ -54,14 +63,16 @@ Watair.prototype =
 
 	    sprite.setDestination = function(x, y)
 	    {
-	    	this.destX = x;
-	    	this.destY = y;
+	    	this.destX = x; // * window.app.scaleX;
+	    	this.destY = y; // * window.app.scaleY;
 	    	var w = x - this.x;
 	    	var h = y - this.y;
+	    	// var theta = Math.atan(h/w);
 	    	var theta = Math.atan2(h, w);
 	    	this.dx = this.speed * Math.cos(theta);
 	    	this.dy = this.speed * Math.sin(theta);
 	    	console.log("delta:" + this.dx + ", " + this.dy);
+	    	this.mvX = this.mvY = true;
 	    };
 
 		return sprite;
@@ -107,7 +118,7 @@ Watair.prototype =
 		var sprites = this.sprites;
         for (var i = sprites.length - 1; i >= 0; i--)
         {
-            sprites[i].update(Math.PI / 4); // TODO: Remove delta from update call
+            sprites[i].update();
         }
     },
 
@@ -117,6 +128,18 @@ Watair.prototype =
         for (var i = this.sprites.length - 1; i >= 0; i--)
         {
             sprite = this.sprites[i];
+
+/*
+            // Debug rendering by drawing boxes
+            ctx.beginPath();
+            ctx.rect(sprite.x - 2, sprite.y - 2, 36, 36);
+            // ctx.fillStyle = "#8ED6FF";
+		    // ctx.fill();
+		    ctx.lineWidth = 4;
+		    ctx.strokeStyle = "black";
+		    ctx.stroke();
+*/
+
             ctx.drawImage(sprite.img, sprite.x, sprite.y);
         }
     }
