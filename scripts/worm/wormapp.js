@@ -53,15 +53,15 @@ Application.prototype =
         {
             return;
         }
-        
+
         this.watair.init();
-        
+
         this.pixelWidth = 240;
         this.pixelHeight = 320;
         this.ratio = this.pixelWidth / this.pixelHeight;
         this.wInnerWidth = 0;
         this.wInnerHeight = 0;
-        
+
         this.canvasResize();
 
         var creationFunctions =
@@ -114,19 +114,18 @@ Application.prototype =
 
         return false;
     },
-    
+
     loadImages : function loadImagesFn(mappingTable)
     {
-        var imageName = 'textures/crate.jpg';
-        
-        this.images = [];
-        
+    	this.images = [];
+/*
+        var imageName = 'textures/fly.png';
+
         this.crateImage = new Image();
         var crateURL = mappingTable[imageName];
         if (crateURL)
         {
-            
-            this.crateImage.src = crateURL;  
+            this.crateImage.src = crateURL;
         }
         else
         {
@@ -135,28 +134,37 @@ Application.prototype =
             {
                 console.error('Image missing: ', imageName);
             }
-          
+
         }
-        
-        var sprite, imageURL, image;
-        var sprites = this.watair.sprites;
-        
-        for (var i = 0; i < sprites.length; i++)
-        {
-            sprite = sprites[i];
-            imageURL = mappingTable[sprite.imageName];
-            if (imageURL)
-            {
-                image = this.images[sprite.imageName];
-                if (!image)
-                {
-                    image = new Image();    
-                }
-                image.src = imageURL;
-                sprite.setImage(image);
-                this.images[sprite.imageName] = image;
-            }
-        }
+*/
+
+		function loadSprites(sprites, images) {
+	        var sprite, imageURL, image;
+
+	        for (var i = sprites.length - 1; i >= 0; i--)
+	        {
+	            sprite = sprites[i];
+	            imageURL = mappingTable[sprite.imageName];
+	            if (imageURL)
+	            {
+	                image = images[sprite.imageName];
+	                if (!image)
+	                {
+	                    image = new Image();
+	                }
+	                image.src = imageURL;
+	                sprite.setImage(image);
+	                images[sprite.imageName] = image;
+	            } else {
+	            	var console = window.console;
+		            if (console)
+		            {
+		                console.error('Image for sprite ' + sprite + ' missing: ', imageName);
+		            }
+	            }
+	        }
+		}
+		loadSprites(this.watair.sprites, this.images);
     },
 
     // Update game state
@@ -201,12 +209,12 @@ Application.prototype =
 
     // Render function called in main loop
     render : function renderFn(currentTime)
-    {   
+    {
         this.renderCanvas();
 
         this.needToRender = false;
     },
-    
+
     canvasResize : function canvasResizeFn()
     {
         var canvas = this.canvas;
@@ -214,51 +222,51 @@ Application.prototype =
 
         this.wInnerHeight = window.innerHeight;
         this.wInnerWidth = window.innerWidth;
-        
+
         canvas.width = (window.innerHeight * this.ratio);
         canvas.height = window.innerHeight;
-        
+
         this.scaleX = window.innerHeight / this.pixelHeight;
         this.scaleY = canvas.width / this.pixelWidth;
-        
-        
+
+
         //canvas2dContext.translate(
          //                       -(((canvas2dContext.canvas.width * scale) - canvas2dContext.canvas.width) >> 1),
          //                       -(((canvas2dContext.canvas.height * scale) - canvas2dContext.canvas.height) >> 1));
         canvas2dContext.scale(this.scaleX, this.scaleY);
-        
+
         this.width = canvas.width;
         this.height = canvas.height;
     },
-    
+
     renderCanvas : function renderCanvasFn()
     {
         var canvas = this.canvas;
         var canvas2dContext = this.canvas2dContext;
-        
+
         var innerHeight = window.innerHeight;
         var innerWidth = window.innerWidth;
-        
+
         if (innerHeight != this.wInnerHeight || innerWidth != this.wInnerWidth)
         {
             this.canvasResize();
         }
-        
+
         canvas2dContext.clearRect(0 , 0, this.width, this.height);
 
         // Clear background to red or grey
         canvas2dContext.fillStyle = "#555500";
         canvas2dContext.fillRect(0, 0, 240, 320);
-        
+
         canvas2dContext.fillStyle = "#000000";
         canvas2dContext.fillText("Height: " + canvas.height + ', Width: ' + canvas.width, 10, 20);
-        
-        canvas2dContext.drawImage(this.crateImage, 10, 40);
-        
+
+//        canvas2dContext.drawImage(this.crateImage, 10, 40);
+
         this.watair.draw(canvas2dContext);
-        
-        
-        
+
+
+
 
         // Focus
         //if (this.isFocused)
@@ -449,13 +457,13 @@ Application.prototype =
         //managers.shaderManager = ShaderManager.create(graphicsDevice, requestHandler, null, errorCallback);
         //managers.effectManager = EffectManager.create(graphicsDevice, mathDevice, managers.shaderManager, null, errorCallback);
         //managers.fontManager = FontManager.create(graphicsDevice, requestHandler, null, errorCallback);
-        
-    
+
+
         this.canvas = TurbulenzEngine.canvas;
         this.canvas2dContext = this.canvas.getContext('2d');
-        
-        
-        
+
+
+
 
         return true;
     },
@@ -532,19 +540,15 @@ Application.prototype =
         var game = this.game;
         var inputDevice = this.devices.inputDevice;
 
-        // Closure for keyDown callback
-        function onKeyDown(keynum)
-        {
-            game.onKeyDown(keynum);
-        }
-
+/*
         function onMouseDown(keynum)
         {
-            game.onMouseDown(keynum);
+        	console.log("onMouseDown");
+            // game.onMouseDown(keynum);
         }
+*/
 
-        inputDevice.addEventListener('keydown', onKeyDown);
-        inputDevice.addEventListener('mousedown', onMouseDown);
+        inputDevice.addEventListener('mousedown', this.onPlayerTouch.bind(this));
     },
 
     // Create GameLeaderboards
@@ -657,13 +661,13 @@ Application.prototype =
     // Starts loading scene and creates an interval to check loading progress
     enterLoadingLoop : function enterLoadingLoopFn()
     {
-       
+
         var that = this;
         var managers = this.managers;
         var mappingTable = this.mappingTable;
         var urlMapping = mappingTable.urlMapping;
         var assetPrefix = mappingTable.assetPrefix;
-        
+
         this.loadImages(urlMapping);
 
         //managers.textureManager.setPathRemapping(urlMapping, assetPrefix);
@@ -1075,6 +1079,11 @@ Application.prototype =
             // Clear native engine references
             this.devices = null;
         }
+    },
+
+    onPlayerTouch : function onPlayerTouch(ignored, x, y) {
+		console.log("touch: " + x + ", " + y);
+		this.watair.movePlayerTo(x, y);
     }
 };
 
@@ -1110,7 +1119,7 @@ Application.create = function applicationCreateFn(runInEngine)
     application.font = null;
     application.technique2D = null;
     application.technique2Dparameters = null;
-    
+
     application.watair = Watair.create({}, application);
 
     return application;
