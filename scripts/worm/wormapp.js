@@ -657,8 +657,6 @@ Application.prototype =
           {
             app.soundBubbleDown = sound;
             app.watair.bubbleDownFn = function() {
-                            console.log('bubble down');
-
               playerOneSoundSource.play(sound);
             }
           } else {
@@ -675,7 +673,6 @@ Application.prototype =
           {
             app.soundBubbleUp = sound;
             app.watair.bubbleUpFn = function() {
-              console.log('bubble up');
               playerOneSoundSource.play(sound);
             }
           } else {
