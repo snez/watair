@@ -62,6 +62,18 @@ function setCoordinates(id, coordinates) {
   return false;
 }
 
+function createBubbles(num) {
+  var randomX = 0;
+  var randomY = 0;
+  var points = [];
+  for (i = 0; i < num; i++) {
+    randomX = Math.floor((Math.random()*240)+1);
+    randomY = Math.floor((Math.random()*320)+1);
+    points.push({x: randomX, y: randomY});
+  }
+  return points;
+}
+
 //app.get('/',function(req, resp){
 //  resp.sendfile(__dirname + '/index.html');
 //});
@@ -70,6 +82,9 @@ io.sockets.on('connection', function (socket) {
   var playerNum = addPlayer(socket.id);
   if (playerNum !== false) 
   {
+    if (players.length >= 2) {
+      socket.emit('msg', {type: 'createBubbles', points: createBubbles()});
+    }
     socket.emit('msg', 'Welcome player '+playerNum);
     socket.emit('msg', { type: 'setPlayer', num: playerNum });
     

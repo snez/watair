@@ -106,6 +106,9 @@ Application.prototype =
             if (data.type == 'setPlayer') {
               app.watair.setPlayer(data.num);
             }
+            if (data.type == 'createBubbles') {
+              
+            }
           }
         });
         
