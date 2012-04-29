@@ -87,6 +87,16 @@ Watair.prototype =
 		        	this.y = 100;
 		        }
 		    }));
+        
+        // bubble placement
+        for (var j = 0; j < 10; j++)
+        {
+        	var randomX = Math.floor((Math.random()*240)+1);
+            var randomY = Math.floor((Math.random()*320)+1);
+            
+            this.sprites.push(Sprite.create(randomX, randomY, 'textures/bubble.png', this.app, function(){}));
+        }
+
     },
 
     movePlayerTo : function moveTo(x, y) {
