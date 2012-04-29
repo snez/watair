@@ -162,7 +162,7 @@ Watair.prototype =
 		this.playerSprite = this.playerSprites[0];
     this.opponentSprite = this.playerSprites[1];
 
-        this.sprites.push(Sprite.create(0, 150, 'textures/under-glow-iphone-wallpaper.jpg', this.app, function()
+        this.sprites.push(Sprite.create(0, 150, 'textures/water.jpg', this.app, function()
 		    {
 		    	var pixelHeight = this.app.pixelHeight;
 		        this.y += 1;
