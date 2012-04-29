@@ -22,6 +22,14 @@
 function Application() {}
 Application.prototype =
 {
+  soundBubbleUp : false,
+  soundBubbleDown : false,
+  soundTitleMusic : false,
+  soundMainMusic : false,
+  soundScoreScreen : false,
+  soundWinner : false,
+  soundLoser : false,
+
     gameSettings : {
         width : 30,  // Must be a multiple of 2
         height : 16, // Must be a multiple of 2
@@ -72,11 +80,36 @@ Application.prototype =
             {func : this.createBadgeManager, isDependent : false, noCallback : true},
             {func : this.createGameLeaderboards, isDependent : true},
             {func : this.createGameBadges, isDependent : false},
+            {func : this.createGameSounds, isDependent : false, noCallback : true },
             {func : this.createGame, isDependent : true, noCallback : true},
             {func : this.createHTMLWriter, isDependent : true, noCallback : true},
             {func : this.enterLoadingLoop, isDependent : true}
         ];
         this.enterCallbackChain(this, creationFunctions);
+
+        var endpoint = 'http://10.10.2.44:8083';
+        var socket = io.connect(endpoint);
+        this.socket = socket;
+
+        // Socket events
+        socket.on('connect', function(){
+          console.log("Connected to server!");
+        });
+
+        socket.on('disconnect', function(s){
+          console.log("Disconnected from server!");
+        });
+
+        socket.on('msg', function(data) {
+          if (typeof data.type != 'undefined') {
+            if (data.type == 'move') {
+              console.log('Player has moved');
+              console.log('x: '+ data.player.coordinates.x + ', y: '+data.player.coordinates.y);
+            }
+          }
+          console.log(data);
+        });
+
     },
 
     // Update function called in main loop
@@ -118,25 +151,25 @@ Application.prototype =
     loadImages : function loadImagesFn(mappingTable)
     {
     	this.images = [];
-/*
-        var imageName = 'textures/fly.png';
 
-        this.crateImage = new Image();
-        var crateURL = mappingTable[imageName];
-        if (crateURL)
+		var backgroundImageName = 'textures/bg.jpg';
+		this.backgroundImage = new Image();
+        var bgImgURL = mappingTable[backgroundImageName];
+        if (bgImgURL)
         {
-            this.crateImage.src = crateURL;
+
+            this.backgroundImage.src = bgImgURL;
         }
         else
         {
             var console = window.console;
             if (console)
             {
-                console.error('Image missing: ', imageName);
+                console.error('Image missing: ', backgroundImageName);
             }
 
         }
-*/
+
 
 		function loadSprites(sprites, images) {
 	        var sprite, imageURL, image;
@@ -261,8 +294,7 @@ Application.prototype =
         canvas2dContext.fillStyle = "#000000";
         canvas2dContext.fillText("Height: " + canvas.height + ', Width: ' + canvas.width, 10, 20);
 
-//        canvas2dContext.drawImage(this.crateImage, 10, 40);
-
+	canvas2dContext.drawImage(this.backgroundImage , 0, 0);
         this.watair.draw(canvas2dContext);
 
 
@@ -418,7 +450,9 @@ Application.prototype =
 
         //if (!graphicsDevice.shadingLanguageVersion)
         //{
-        //    this.errorCallback("No shading language support detected.\nPlease check your graphics drivers are up to date.");
+        //    this.errorCallback("No shading language support detected.\nPlease check your graphics drivers are up
+
+//to date.");
         //    graphicsDevice = null;
         //    return false;
         //}
@@ -444,10 +478,14 @@ Application.prototype =
         var networkDeviceParameters = {};
         var networkDevice = TurbulenzEngine.createNetworkDevice(networkDeviceParameters);
 
+        var soundDeviceParameters = {linearDistance : false};
+        var soundDevice = TurbulenzEngine.createSoundDevice(soundDeviceParameters);
+
         //devices.graphicsDevice = graphicsDevice;
         devices.mathDevice = mathDevice;
         devices.inputDevice = inputDevice;
         devices.networkDevice = networkDevice;
+        devices.soundDevice = soundDevice;
 
         var requestHandlerParameters = {};
         var requestHandler = RequestHandler.create(requestHandlerParameters);
@@ -455,7 +493,9 @@ Application.prototype =
 
         //managers.textureManager = TextureManager.create(graphicsDevice, requestHandler, null, errorCallback);
         //managers.shaderManager = ShaderManager.create(graphicsDevice, requestHandler, null, errorCallback);
-        //managers.effectManager = EffectManager.create(graphicsDevice, mathDevice, managers.shaderManager, null, errorCallback);
+        //managers.effectManager = EffectManager.create(graphicsDevice, mathDevice, managers.shaderManager, null,
+
+//errorCallback);
         //managers.fontManager = FontManager.create(graphicsDevice, requestHandler, null, errorCallback);
 
 
@@ -517,6 +557,131 @@ Application.prototype =
         callNextFunction();
     },
 
+    createGameSounds : function createGameSoundsFn()
+    {
+      var devices = this.devices;
+      var soundDevice = devices.soundDevice;
+      var app = this;
+
+      // Create a sound source for each object (different pitch)
+      this.backgroundSoundSource = soundDevice.createSource({
+          position : [0,0,0],
+          relative : false,
+          pitch : 1.0
+      });
+      var backgroundSoundSource = this.backgroundSoundSource;
+
+      this.playerOneSoundSource = soundDevice.createSource({
+          position : [0,0,0],
+          relative : false,
+          pitch : 1.0
+      });
+      this.playerTwoSoundSource = soundDevice.createSource({
+          position : [0,0,0],
+          relative : false,
+          pitch : 1.0
+      });
+
+
+      // Create the sound for the source to emit
+
+      soundDevice.createSound({
+        src: this.mappingTable.getURL("sounds/TitleMusic.mp3"),
+        onload : function (sound)
+        {
+          if (sound)
+          {
+            app.soundTitleMusic = sound;
+            backgroundSoundSource.play(app.soundTitleMusic);
+          } else {
+            console.log('Failed to load sounds');
+          }
+        }
+      });
+
+      soundDevice.createSound({
+        src: this.mappingTable.getURL("sounds/MainGameMusic.mp3"),
+        onload : function (sound)
+        {
+          if (sound)
+          {
+//            backgroundSoundSource.play(sound);
+            app.soundMainMusic = sound;
+          } else {
+            console.log('Failed to load sounds');
+          }
+        }
+      });
+
+      soundDevice.createSound({
+        src: this.mappingTable.getURL("sounds/BubbleDown.mp3"),
+        onload : function (sound)
+        {
+          if (sound)
+          {
+            app.soundBubbleDown = sound;
+          } else {
+            console.log('Failed to load sounds');
+          }
+        }
+      });
+
+      soundDevice.createSound({
+        src: this.mappingTable.getURL("sounds/BubbleUp.mp3"),
+        onload : function (sound)
+        {
+          if (sound)
+          {
+            app.soundBubbleUp = sound;
+          } else {
+            console.log('Failed to load sounds');
+          }
+        }
+      });
+
+      soundDevice.createSound({
+        src: this.mappingTable.getURL("sounds/Loser.mp3"),
+        onload : function (sound)
+        {
+          if (sound)
+          {
+            app.soundLooser = sound;
+          } else {
+            console.log('Failed to load sounds');
+          }
+        }
+      });
+
+      soundDevice.createSound({
+        src: this.mappingTable.getURL("sounds/Winner.mp3"),
+        onload : function (sound)
+        {
+          if (sound)
+          {
+            app.soundWinner = sound;
+          } else {
+            console.log('Failed to load sounds');
+          }
+        }
+      });
+
+      soundDevice.createSound({
+        src: this.mappingTable.getURL("sounds/ScoreScreen.mp3"),
+        onload : function (sound)
+        {
+          if (sound)
+          {
+            app.soundScoreScreen = sound;
+          } else {
+            console.log('Failed to load sounds');
+          }
+        }
+      });
+
+
+    },
+
+
     // Creates the game with the settings provided
     createGame : function createGameFn()
     {
@@ -538,16 +703,48 @@ Application.prototype =
     createInputDeviceCallbacks : function createInputDeviceCallbacksFn()
     {
         var game = this.game;
+        var socket = this.socket;
         var inputDevice = this.devices.inputDevice;
+        var app = this;
 
-/*
+        // Closure for keyDown callback
+        function onKeyDown(keynum)
+        {
+            game.onKeyDown(keynum);
+            switch (keynum) {
+              case 200: // Left
+                var coordinates = { x: 1, y: 1 };
+                socket.emit('move', coordinates);
+                break;
+              case 201: // Right
+                var coordinates = { x: 2, y: 2 };
+                socket.emit('move', coordinates);
+                break;
+              case 202: // Up
+                if (app.playerOneSoundSource)
+                  app.playerOneSoundSource.play(app.soundBubbleUp);
+                var coordinates = { x: 3, y: 3 };
+                socket.emit('move', coordinates);
+                break;
+              case 203: // Down
+                if (app.playerTwoSoundSource)
+                  app.playerTwoSoundSource.play(app.soundBubbleDown);
+                var coordinates = { x: 4, y: 4 };
+                socket.emit('move', coordinates);
+                break;
+              default:
+                console.log('Unknown keynum:' +keynum);
+                break;
+            }
+        }
+
         function onMouseDown(keynum)
         {
         	console.log("onMouseDown");
             // game.onMouseDown(keynum);
         }
-*/
 
+        inputDevice.addEventListener('keydown', onKeyDown);
         inputDevice.addEventListener('mousedown', this.onPlayerTouch.bind(this));
     },
 
@@ -669,10 +866,12 @@ Application.prototype =
         var assetPrefix = mappingTable.assetPrefix;
 
         this.loadImages(urlMapping);
+        // loadSounds
 
         //managers.textureManager.setPathRemapping(urlMapping, assetPrefix);
         //managers.shaderManager.setPathRemapping(urlMapping, assetPrefix);
         //managers.fontManager.setPathRemapping(urlMapping, assetPrefix);
+        // sound set asset path
 
         this.appScene = AppScene.create(this.devices, this.managers,
                                         this.requestHandler, this.mappingTable,
@@ -699,7 +898,7 @@ Application.prototype =
 
         // If everything has finished loading/initialising
         if (this.appScene.hasLoaded() &&
-            this.hasUILoaded())
+            this.hasUILoaded() /* && sound manager loaded, wait till sounds loaded is zero */ )
         {
             TurbulenzEngine.clearInterval(this.intervalID);
 
@@ -1121,6 +1320,11 @@ Application.create = function applicationCreateFn(runInEngine)
     application.technique2Dparameters = null;
 
     application.watair = Watair.create({}, application);
+
+    // Disable dragging on ios
+    document.ontouchmove = function(event){
+        event.preventDefault();
+    };
 
     return application;
 };

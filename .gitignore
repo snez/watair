@@ -1,2 +1,5 @@
 manifest.yaml
-
+manifest.yaml
+/server/.bin/
+/server/socket.io/node_modules/socket.io-client/node_modules/.bin/
+/server/node_modules/socket.io/node_modules/socket.io-client/node_modules/.bin/

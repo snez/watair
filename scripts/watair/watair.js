@@ -2,28 +2,16 @@
 function Sprite() {}
 Sprite.prototype =
 {
-    update: function()
-    {
-/*
-        var pixelWidth = this.app.pixelWidth;
-        this.x += delta;
-
-        if (this.x > pixelWidth)
-        {
-            this.x = this.x - pixelWidth;
-        }
-        this.y = Math.sin(this.x);
-*/
-    },
+    update: function(){},
 
     setImage: function (img)
     {
         this.img = img;
-    },
+    }
 
 };
 
-Sprite.create = function spriteCreateFn(x, y, imageName, app)
+Sprite.create = function spriteCreateFn(x, y, imageName, app, updateFunction)
 {
     var c = new Sprite();
     c.x = x;
@@ -32,6 +20,8 @@ Sprite.create = function spriteCreateFn(x, y, imageName, app)
     c.app = app;
     c.img = new Image();
     c.imageName = imageName ? imageName: 'textures/cratebubble_up_1.png';
+
+    c.update = updateFunction;
 
     return c;
 };
@@ -44,7 +34,17 @@ function Watair() {}
 Watair.prototype =
 {
 	playerSprite : function(){
-		var sprite = Sprite.create(100, 100, 'textures/fish.png', this.app);
+		var sprite = Sprite.create(100, 100, 'textures/fish.png', this.app, function()
+			{
+				if (this.x !== this.destX)
+				{
+					this.x += this.dx;
+				}
+				if (this.y !== this.destY)
+				{
+					this.y += this.dy;
+				}
+			});
 
 		sprite.speed = 5;
 		sprite.destX = 150;
@@ -64,19 +64,6 @@ Watair.prototype =
 	    	console.log("delta:" + this.dx + ", " + this.dy);
 	    };
 
-		sprite.update = function()
-		{
-			if (this.x !== this.destX)
-			{
-				this.x += this.dx;
-			}
-			if (this.y !== this.destY)
-			{
-				this.y += this.dy;
-			}
-		};
-
-
 		return sprite;
 	}(),
 
@@ -89,6 +76,17 @@ Watair.prototype =
         }
 
         this.sprites.push(this.playerSprite);
+        this.sprites.push(Sprite.create(0, 100, 'textures/under-glow-iphone-wallpaper.jpg', this.app, function()
+		    {
+		    	var pixelHeight = this.app.pixelHeight;
+		        this.y += 1;
+
+		        //if (this.y > pixelHeight)
+		        if (this.y > pixelHeight)
+		        {
+		        	this.y = 100;
+		        }
+		    }));
     },
 
     movePlayerTo : function moveTo(x, y) {
@@ -109,7 +107,7 @@ Watair.prototype =
 		var sprites = this.sprites;
         for (var i = sprites.length - 1; i >= 0; i--)
         {
-            sprites[i].update();
+            sprites[i].update(Math.PI / 4); // TODO: Remove delta from update call
         }
     },
 

@@ -5261,8 +5261,8 @@ Canvas.prototype =
 // Constructor function
 Canvas.create = function canvasCreateFn(gd, md)
 {
-    var width = gd.width;
-    var height = gd.height;
+    var width = 320;
+    var height = 480;
 
     var c = new Canvas();
 
