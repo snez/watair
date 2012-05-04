@@ -30187,7 +30187,7 @@ Application.prototype =
         
         this.enterCallbackChain(this, creationFunctions);
 
-        var endpoint = 'http://10.10.2.44:8083';
+        var endpoint = 'http://flood-fight.stage.cloudmanaged.com:8083';
         var socket = io.connect(endpoint);
         var app = this;
         this.socket = socket;
